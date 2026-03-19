@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, ContactShadows, MeshDistortMaterial } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
@@ -140,8 +140,8 @@ function lerpColors(
 function useAutoLerp() {
   const [colors, setColors] = useState<Record<string, string>>(paletteToColors(PALETTES[0]))
   const [active, setActive] = useState(0)
-	const fromRef   = useRef<Record<string, string>>(paletteToColors(PALETTES[0]))
-	const toRef     = useRef<Record<string, string>>(paletteToColors(PALETTES[1]))
+  const fromRef   = useRef(paletteToColors(PALETTES[0]))
+  const toRef     = useRef(paletteToColors(PALETTES[1]))
   const tRef      = useRef(0)
   const pauseRef  = useRef(false)   // pause while hovering
   const manualRef = useRef<number | null>(null)
@@ -192,7 +192,27 @@ function useAutoLerp() {
   return { colors, active, jumpTo, setPause }
 }
 
-// ─── Main component ─────────────────────────────────────────────────────────
+// ─── Responsive camera — adjusts FOV based on actual canvas dimensions ──────
+// On narrow/short canvases (mobile/tablet) we widen the FOV so the keyboard
+// fills the frame instead of sitting small in the centre.
+function ResponsiveCamera({ baseFov }: { baseFov: number }) {
+  const { camera, size } = useThree()
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return
+    // aspect < 1 means portrait (tall canvas) — increase FOV to fill width
+    // aspect > 1.2 means wide landscape — use base FOV
+    const aspect = size.width / size.height
+    let fov = baseFov
+    if (aspect < 0.6)       fov = baseFov + 28   // very tall portrait (phone)
+    else if (aspect < 0.85) fov = baseFov + 20   // portrait tablet
+    else if (aspect < 1.1)  fov = baseFov + 10   // near-square
+    else if (aspect < 1.4)  fov = baseFov + 4    // slight landscape
+    camera.fov = fov
+    camera.updateProjectionMatrix()
+  }, [camera, size.width, size.height, baseFov])
+  return null
+}
+
 
 export function LandingViewer({ modelPath }: LandingViewerProps) {
   const { colors, active, jumpTo, setPause } = useAutoLerp()
@@ -206,7 +226,7 @@ export function LandingViewer({ modelPath }: LandingViewerProps) {
     >
       <Canvas
         shadows
-        camera={{ position: window.innerWidth >= 1024 ? [0, 4.2, 0.9] : [0, 6.5, 1.4], fov: window.innerWidth >= 1024 ? 40 : 46 }}
+        camera={{ position: [0, 4.2, 0.9], fov: 40 }}
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
@@ -215,6 +235,7 @@ export function LandingViewer({ modelPath }: LandingViewerProps) {
         style={{ background: '#060606' }}
       >
         <color attach="background" args={['#060606']} />
+        <ResponsiveCamera baseFov={cfg.cameraFov ?? 40} />
         <Suspense fallback={null}>
           {/* Metallic lighting rig */}
           <ambientLight intensity={0.12} />
