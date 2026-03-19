@@ -32,7 +32,7 @@ export function CartDrawer() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-5 text-center px-8">
               <ShoppingBag className="w-14 h-14 text-white/12" />
-              <p className="font-display text-3xl text-white/30 italic">Cart is empty</p>
+              <p className="font-sans text-2xl font-semibold text-white/30">Cart is empty</p>
               <button onClick={toggleCart} className="font-mono text-sm tracking-widest uppercase text-white/35 hover:text-white transition-colors underline underline-offset-4">
                 Continue Shopping
               </button>
@@ -48,7 +48,7 @@ export function CartDrawer() {
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-xl text-white truncate">{item.product.name}</p>
+                    <p className="font-sans font-semibold text-xl text-white truncate">{item.product.name}</p>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {Object.entries(item.selectedVariants).map(([k, v]) => (
                         <span key={k} className="font-mono text-xs tracking-widest uppercase border border-white/15 text-white/40 px-2 py-0.5">{v}</span>

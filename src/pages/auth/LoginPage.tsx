@@ -30,7 +30,7 @@ export function LoginPage() {
       >
         <a href="/" className="font-heading text-5xl tracking-[0.1em] text-white block mb-14">RABID</a>
 
-        <h1 className="font-display text-4xl italic text-white mb-2">Sign in</h1>
+        <h1 className="font-heading text-5xl text-white mb-2">Sign in</h1>
         <p className="font-mono text-sm text-white/35 tracking-wide mb-10">
           Sign in to track orders and manage your account.
         </p>

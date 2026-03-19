@@ -89,7 +89,7 @@ function OrderCard({ order }: { order: Order }) {
               }
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-display text-base text-white truncate">{item.product.name}</p>
+              <p className="font-sans text-base font-medium text-white truncate">{item.product.name}</p>
               <div className="flex flex-wrap gap-1.5 mt-0.5">
                 {Object.entries(item.selectedVariants).map(([k, v]) => (
                   <span key={k} className="font-mono text-[9px] tracking-widest uppercase border border-white/12 text-white/35 px-1.5 py-0.5">{v}</span>
@@ -177,7 +177,7 @@ export function AccountPage() {
             { label: 'Total Spent', value: formatPrice(totalSpent), isPrice: true },
           ].map(stat => (
             <div key={stat.label} className="bg-[#080808] px-5 py-5 text-center">
-              <p className={`${stat.isPrice ? 'price-display text-xl' : 'font-display text-3xl'} text-white mb-1`}>
+              <p className={`${stat.isPrice ? 'price-display text-xl' : 'font-heading text-4xl'} text-white mb-1`}>
                 {stat.value}
               </p>
               <p className="font-mono text-[10px] tracking-widest uppercase text-white/30">{stat.label}</p>
@@ -205,7 +205,7 @@ export function AccountPage() {
             ) : orders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 gap-5 text-center">
                 <ShoppingBag className="w-14 h-14 text-white/10" />
-                <p className="font-display text-2xl italic text-white/30">No orders yet</p>
+                <p className="font-sans text-xl font-medium text-white/30">No orders yet</p>
                 <Link to="/shop">
                   <Button variant="outline" size="sm">Browse Shop</Button>
                 </Link>

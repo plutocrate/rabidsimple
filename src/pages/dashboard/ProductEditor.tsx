@@ -459,7 +459,7 @@ export function ProductEditor() {
               <p className="font-mono text-[11px] tracking-widest uppercase text-white/25 mb-0.5">
                 {isNew ? 'New Product' : 'Edit Product'}
               </p>
-              <h1 className="font-display text-2xl sm:text-3xl italic text-white truncate">
+              <h1 className="font-heading text-3xl sm:text-4xl text-white truncate">
                 {product.name || 'Untitled'}
               </h1>
             </div>

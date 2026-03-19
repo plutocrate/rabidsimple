@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { siteSettingsService, defaultSiteSettings } from '@/lib/firestore'
 import type { SiteSettings } from '@/lib/firestore'
+import { useSiteSettings } from '@/store/useSiteSettings'
 import { Save, Check, Upload, Wifi, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -24,11 +25,16 @@ export function DashboardSiteSettings() {
 
   function update(patch: Partial<SiteSettings>) { setSettings(s => ({ ...s, ...patch })) }
 
+  const { fetch: refetchSettings } = useSiteSettings()
+
   async function handleSave() {
     setSaving(true); setError('')
     try {
       await siteSettingsService.update(settings)
-      setSaved(true); setTimeout(() => setSaved(false), 2500)
+      setSaved(true)
+      // Force all components using useSiteSettings to get fresh data
+      await refetchSettings()
+      setTimeout(() => setSaved(false), 2500)
     } catch (e: any) { setError(e?.message ?? 'Save failed') }
     finally { setSaving(false) }
   }
@@ -41,7 +47,7 @@ export function DashboardSiteSettings() {
         <div className="flex items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <p className="font-mono text-[10px] tracking-widest uppercase text-white/25 mb-2">Admin</p>
-            <h1 className="font-display text-2xl sm:text-3xl italic text-white">Site Settings</h1>
+            <h1 className="font-heading text-4xl text-white">Site Settings</h1>
           </div>
           <Button size="sm" onClick={handleSave} disabled={saving} className="gap-1.5 shrink-0">
             {saved ? <Check className="w-3 h-3" /> : <Save className="w-3 h-3" />}

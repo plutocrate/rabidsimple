@@ -50,7 +50,7 @@ export function DashboardOrders() {
       <div className="p-5 sm:p-7 lg:p-10">
         <div className="mb-8">
           <p className="font-mono text-sm tracking-widest uppercase text-white/30 mb-2">Manage</p>
-          <h1 className="font-display text-4xl italic text-white">Orders</h1>
+          <h1 className="font-heading text-5xl text-white">Orders</h1>
         </div>
 
         <div className="flex flex-col gap-4 mb-6">
@@ -71,14 +71,14 @@ export function DashboardOrders() {
         {/* Mobile cards */}
         <div className="sm:hidden space-y-3">
           {loading ? <p className="font-mono text-sm text-white/25 animate-pulse py-4">Loading…</p>
-          : filtered.length === 0 ? <p className="font-display italic text-2xl text-white/25 py-8 text-center">No orders found</p>
+          : filtered.length === 0 ? <p className="font-sans text-xl text-white/25 py-8 text-center">No orders found</p>
           : filtered.map(o => (
             <div key={o.id} className="border border-white/10 p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-sm text-white/65 font-semibold">#{o.id.slice(-6).toUpperCase()}</span>
                 <span className={`font-mono text-xs tracking-widest uppercase border px-2 py-1 ${STATUS_STYLES[o.status]}`}>{o.status}</span>
               </div>
-              <p className="font-display text-xl text-white/85">{o.shippingAddress?.name ?? '—'}</p>
+              <p className="font-sans text-base font-semibold text-white/85">{o.shippingAddress?.name ?? '—'}</p>
               <p className="font-mono text-sm text-white/38">{o.shippingAddress?.city}</p>
               <div className="flex items-center justify-between">
                 <span className="price-display text-lg text-white/75 font-semibold">{formatPrice(o.total)}</span>
@@ -108,12 +108,12 @@ export function DashboardOrders() {
               {loading ? (
                 <tr><td colSpan={6} className="px-5 py-12 text-center font-mono text-sm text-white/25 animate-pulse">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={6} className="px-5 py-12 text-center font-display italic text-2xl text-white/25">No orders found</td></tr>
+                <tr><td colSpan={6} className="px-5 py-12 text-center font-sans text-xl text-white/25">No orders found</td></tr>
               ) : filtered.map(o => (
                 <tr key={o.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
                   <td className="px-5 py-4 font-mono text-sm text-white/65 font-semibold">#{o.id.slice(-6).toUpperCase()}</td>
                   <td className="px-5 py-4">
-                    <p className="font-display text-lg text-white/82">{o.shippingAddress?.name ?? '—'}</p>
+                    <p className="font-sans text-base font-semibold text-white/80">{o.shippingAddress?.name ?? '—'}</p>
                     <p className="font-mono text-sm text-white/30">{o.shippingAddress?.city}</p>
                   </td>
                   <td className="px-5 py-4 price-display text-base text-white/75 font-semibold">{formatPrice(o.total)}</td>

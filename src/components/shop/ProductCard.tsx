@@ -36,12 +36,12 @@ export function ProductCard({ product, className }: { product: Product; classNam
       {/* Info */}
       <div className="p-6">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="font-display text-2xl text-white leading-tight">{product.name}</h3>
+          <h3 className="font-sans font-semibold text-2xl text-white leading-tight">{product.name}</h3>
           <span className="price-display text-lg text-white font-semibold flex-shrink-0 mt-0.5">
             {formatPrice(product.basePrice)}
           </span>
         </div>
-        <p className="font-mono text-sm text-white/45 mb-4 leading-relaxed">{product.subtitle}</p>
+        <p className="font-sans text-sm text-white/60 mb-4 leading-relaxed">{product.subtitle}</p>
         <div className="flex flex-wrap gap-2">
           {product.tags?.slice(0, 3).map(tag => (
             <span key={tag.id} className="font-mono text-xs tracking-widest uppercase border border-white/20 text-white/55 px-2.5 py-1">

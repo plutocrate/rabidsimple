@@ -1,54 +1,52 @@
-import { PageLayout } from '@/components/layout/PageLayout'
 import { motion } from 'framer-motion'
+import { PageLayout } from '@/components/layout/PageLayout'
+import { PageContent, Label, Display, Body, ContentSection } from '@/components/ui/typography'
 
 export function PrivacyPage() {
   return (
     <PageLayout>
-      <div className="max-w-3xl mx-auto px-6 pt-32 pb-32">
+      <PageContent>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <p className="font-mono text-[10px] tracking-widest uppercase text-white/25 mb-4">Legal</p>
-          <h1 className="font-display text-4xl italic text-white mb-3">Privacy Policy</h1>
-          <p className="font-mono text-[10px] text-white/25 mb-12">Last updated: January 2025</p>
+          <Label className="mb-4">Legal</Label>
+          <Display className="mb-2">Privacy Policy</Display>
+          <Label className="mb-14">Last updated: January 2025</Label>
 
-          <div className="space-y-10 font-display text-base text-white/55 leading-[1.8]">
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">1. Information We Collect</h2>
-              <p>When you place an order or create an account on RABID, we collect your name, email address, shipping address, and payment information (processed securely via our payment provider — we never store raw card data). When you contact us via our services enquiry form, we collect your name, email, and message content.</p>
-              <p className="mt-3">We also collect anonymous usage data (pages visited, session duration) via privacy-respecting analytics to improve our store.</p>
-            </section>
+          <div className="space-y-12">
+            <ContentSection title="1. Information We Collect">
+              <Body>When you place an order or create an account on RABID, we collect your name, email address, shipping address, and payment information (processed securely via our payment provider — we never store raw card data). When you contact us via our services enquiry form, we collect your name, email, and message content.</Body>
+              <Body>We also collect anonymous usage data (pages visited, session duration) via privacy-respecting analytics to improve our store.</Body>
+            </ContentSection>
 
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">2. How We Use Your Information</h2>
-              <ul className="space-y-2 ml-4">
+            <ContentSection title="2. How We Use Your Information">
+              <ul className="space-y-3">
                 {['Fulfil and ship your orders', 'Send order confirmations and shipping updates', 'Respond to service enquiries', 'Improve our products and website', 'Comply with legal obligations'].map(item => (
-                  <li key={item} className="flex gap-2"><span className="text-white/25 mt-1">—</span>{item}</li>
+                  <li key={item} className="flex gap-3">
+                    <span className="font-mono text-white/25 shrink-0 mt-1">—</span>
+                    <Body className="mt-0">{item}</Body>
+                  </li>
                 ))}
               </ul>
-              <p className="mt-3">We do not sell, rent, or trade your personal data to third parties. Ever.</p>
-            </section>
+              <Body>We do not sell, rent, or trade your personal data to third parties. Ever.</Body>
+            </ContentSection>
 
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">3. Data Storage & Security</h2>
-              <p>Your data is stored on secure servers in India. We use industry-standard encryption (TLS) for all data in transit. Passwords are hashed using bcrypt and never stored in plain text.</p>
-            </section>
+            <ContentSection title="3. Data Storage & Security">
+              <Body>Your data is stored on secure servers in India. We use industry-standard encryption (TLS) for all data in transit. Passwords are hashed and never stored in plain text.</Body>
+            </ContentSection>
 
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">4. Cookies</h2>
-              <p>We use essential cookies for authentication and cart persistence. We do not use advertising or tracking cookies. You can disable cookies in your browser, though this may affect checkout functionality.</p>
-            </section>
+            <ContentSection title="4. Cookies">
+              <Body>We use essential cookies for authentication and cart persistence. We do not use advertising or tracking cookies. You can disable cookies in your browser, though this may affect checkout functionality.</Body>
+            </ContentSection>
 
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">5. Your Rights</h2>
-              <p>You may request access to, correction of, or deletion of your personal data at any time by emailing <a href="mailto:hello@rabid.co.in" className="text-white/70 underline underline-offset-2">hello@rabid.co.in</a>. We will respond within 30 days.</p>
-            </section>
+            <ContentSection title="5. Your Rights">
+              <Body>You may request access to, correction of, or deletion of your personal data at any time by emailing <a href="mailto:hello@rabid.co.in" className="text-white underline underline-offset-4 hover:text-white/80 transition-colors">hello@rabid.co.in</a>. We will respond within 30 days.</Body>
+            </ContentSection>
 
-            <section>
-              <h2 className="font-display text-xl text-white mb-3 not-italic">6. Contact</h2>
-              <p>For any privacy-related queries, contact us at <a href="mailto:hello@rabid.co.in" className="text-white/70 underline underline-offset-2">hello@rabid.co.in</a> or write to RABID, India.</p>
-            </section>
+            <ContentSection title="6. Contact">
+              <Body>For privacy-related queries, contact us at <a href="mailto:hello@rabid.co.in" className="text-white underline underline-offset-4 hover:text-white/80 transition-colors">hello@rabid.co.in</a>.</Body>
+            </ContentSection>
           </div>
         </motion.div>
-      </div>
+      </PageContent>
     </PageLayout>
   )
 }

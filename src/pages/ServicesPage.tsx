@@ -77,8 +77,8 @@ export function ServicesPage() {
               transition={{ delay: i * 0.07, duration: 0.5 }}
               className="bg-background p-8 sm:p-10 group hover:bg-white/[0.03] transition-colors flex flex-col">
               <svc.icon className="w-7 h-7 text-white/25 group-hover:text-white/60 transition-colors mb-6" />
-              <h3 className="font-display text-3xl text-white mb-3">{svc.title}</h3>
-              <p className="font-mono text-sm text-white/45 leading-relaxed mb-5">{svc.desc}</p>
+              <h3 className="font-sans font-semibold text-3xl text-white mb-3">{svc.title}</h3>
+              <p className="font-sans text-base text-white/65 leading-relaxed mb-5">{svc.desc}</p>
               <ul className="space-y-2 mb-6">
                 {svc.bullets.map(b => (
                   <li key={b} className="flex items-center gap-2.5 font-mono text-sm text-white/35">
@@ -97,7 +97,7 @@ export function ServicesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
             <p className="font-mono text-sm tracking-widest uppercase text-white/40 mb-4">Get in touch</p>
-            <h2 className="font-display text-4xl sm:text-5xl italic text-white mb-5">Start a project</h2>
+            <h2 className="font-heading text-5xl sm:text-6xl text-white mb-5">Start a project</h2>
             <p className="font-mono text-base text-white/40 leading-relaxed max-w-sm mb-8">
               Tell us what you're building. We'll get back within 24 hours with a rough scope and quote.
             </p>

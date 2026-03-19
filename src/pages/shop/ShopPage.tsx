@@ -74,7 +74,7 @@ export function ShopPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-10">
           <p className="font-mono text-sm tracking-widest uppercase text-white/40 mb-3">Catalogue</p>
           <h1 className="font-heading text-[clamp(3.5rem,8vw,6rem)] leading-none text-white mb-4">Shop</h1>
-          <p className="font-mono text-base text-white/50 max-w-xl leading-relaxed">
+          <p className="font-sans text-base text-white/65 max-w-xl leading-relaxed">
             Every keyboard is handwired and built to order in India. No RGB. No shortcuts.
           </p>
         </motion.div>
@@ -95,7 +95,7 @@ export function ShopPage() {
 
         {/* Tab description + filter */}
         <div className="mb-6">
-          <p className="font-display text-xl italic text-white/50 mb-5">
+          <p className="font-sans text-base text-white/60 mb-5">
             {TABS.find(t => t.key === activeTab)?.desc}
           </p>
           {activeTab !== 'accessory' && <FilterBar />}

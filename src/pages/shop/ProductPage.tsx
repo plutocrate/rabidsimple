@@ -240,7 +240,7 @@ export function ProductPage() {
           >
             <p className="font-mono text-sm tracking-widest uppercase text-white/35 mb-2 capitalize">{product.category}</p>
             <h1 className="font-display text-4xl sm:text-5xl italic text-white mb-3">{product.name}</h1>
-            <p className={cn("font-mono text-base text-white/50 leading-relaxed", hasVariants ? "mb-6" : "mb-4")}>{product.subtitle}</p>
+            <p className={cn("font-sans text-base text-white/65 leading-relaxed", hasVariants ? "mb-6" : "mb-4")}>{product.subtitle}</p>
 
             {(product.tags?.length ?? 0) > 0 && (
               <div className={cn("flex flex-wrap gap-2", hasVariants ? "mb-8" : "mb-4")}>
@@ -289,7 +289,7 @@ export function ProductPage() {
                 <TabsTrigger value="specs" className="text-sm">Specs</TabsTrigger>
               </TabsList>
               <TabsContent value="description">
-                <div className="font-display italic text-white/55 text-lg leading-relaxed whitespace-pre-line">
+                <div className="font-sans text-white/70 text-base sm:text-lg leading-relaxed whitespace-pre-line">
                   {product.longDescription || product.description}
                 </div>
               </TabsContent>

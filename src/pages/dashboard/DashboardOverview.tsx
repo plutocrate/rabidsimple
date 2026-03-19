@@ -49,7 +49,7 @@ export function DashboardOverview() {
           <p className="font-mono text-sm tracking-widest uppercase text-white/30 mb-2">
             {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
-          <h1 className="font-display text-4xl italic text-white">Overview</h1>
+          <h1 className="font-heading text-5xl text-white">Overview</h1>
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
@@ -80,7 +80,7 @@ export function DashboardOverview() {
                     <span className="font-mono text-sm text-white/60 font-semibold">#{o.id.slice(-6).toUpperCase()}</span>
                     <span className={`font-mono text-xs tracking-widest uppercase border px-2 py-1 ${STATUS_STYLES[o.status]}`}>{o.status}</span>
                   </div>
-                  <p className="font-display text-lg text-white/80">{o.shippingAddress?.name ?? '—'}</p>
+                  <p className="font-sans text-base font-semibold text-white/80">{o.shippingAddress?.name ?? '—'}</p>
                   <div className="flex items-center justify-between">
                     <span className="price-display text-base text-white/70 font-semibold">{formatPrice(o.total)}</span>
                     <span className="font-mono text-sm text-white/30">{new Date(o.createdAt).toLocaleDateString('en-IN')}</span>
@@ -102,7 +102,7 @@ export function DashboardOverview() {
                   {recent.map(o => (
                     <tr key={o.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                       <td className="px-5 py-4 font-mono text-sm text-white/65 font-semibold">#{o.id.slice(-6).toUpperCase()}</td>
-                      <td className="px-5 py-4 font-display italic text-lg text-white/75">{o.shippingAddress?.name ?? '—'}</td>
+                      <td className="px-5 py-4 font-sans text-sm text-white/75">{o.shippingAddress?.name ?? '—'}</td>
                       <td className="px-5 py-4 price-display text-base text-white/75 font-semibold">{formatPrice(o.total)}</td>
                       <td className="px-5 py-4">
                         <span className={`font-mono text-xs tracking-widest uppercase border px-2.5 py-1 ${STATUS_STYLES[o.status]}`}>{o.status}</span>

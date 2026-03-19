@@ -19,14 +19,15 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
+    // Don't reset banner on route change - let user dismiss once per session
   }, [pathname])
 
   useEffect(() => {
     fetch()
   }, [])
 
-  const showBanner = loaded &&
-    settings.announcementEnabled &&
+  const showBanner =
+    settings.announcementEnabled === true &&
     !!settings.announcementBanner?.trim() &&
     !bannerDismissed
 

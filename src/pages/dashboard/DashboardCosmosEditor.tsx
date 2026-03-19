@@ -76,7 +76,7 @@ export function DashboardCosmosEditor() {
           <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-white/6">
             <div>
               <p className="font-mono text-[9px] tracking-widest uppercase text-white/25 mb-1">Cosmos</p>
-              <h1 className="font-display text-lg sm:text-xl italic text-white">Keyboard Models</h1>
+              <h1 className="font-heading text-3xl text-white">Keyboard Models</h1>
             </div>
             <Button size="sm" className="gap-1.5 shrink-0" onClick={openNew}>
               <Plus className="w-3 h-3" />
@@ -87,7 +87,7 @@ export function DashboardCosmosEditor() {
               <p className="font-mono text-[11px] text-white/20 animate-pulse px-6 py-4">Loading…</p>
             ) : configs.length === 0 ? (
               <div className="px-6 py-8 text-center">
-                <p className="font-display italic text-white/25 text-sm">No configs yet.</p>
+                <p className="font-sans text-sm text-white/25">No configs yet.</p>
                 <p className="font-mono text-[9px] text-white/15 mt-2">Click + to add a Cosmos share URL.</p>
               </div>
             ) : configs.map(cfg => (
@@ -151,7 +151,7 @@ export function DashboardCosmosEditor() {
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center">
-                <p className="font-display italic text-white/25 text-lg mb-2">Select a config to preview</p>
+                <p className="font-sans text-base text-white/25 mb-2">Select a config to preview</p>
                 <p className="font-mono text-[10px] text-white/15">Or create a new one with a Cosmos share URL</p>
               </div>
             </div>
@@ -162,7 +162,7 @@ export function DashboardCosmosEditor() {
       <Dialog open={!!edit} onOpenChange={open => !open && closeDialog()}>
         <DialogContent className="max-w-md w-[calc(100vw-2rem)] bg-[#0a0a0a] border-white/10 text-white">
           <DialogHeader>
-            <DialogTitle className="font-display italic text-xl">{isNew ? 'New Cosmos Config' : 'Edit Config'}</DialogTitle>
+            <DialogTitle className="font-sans text-lg font-semibold">{isNew ? 'New Cosmos Config' : 'Edit Config'}</DialogTitle>
           </DialogHeader>
           {edit && (
             <div className="space-y-4 mt-2">

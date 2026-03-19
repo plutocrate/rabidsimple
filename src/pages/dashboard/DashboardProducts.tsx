@@ -42,7 +42,7 @@ export function DashboardProducts() {
         <div className="flex items-center justify-between mb-8 gap-4">
           <div>
             <p className="font-mono text-sm tracking-widest uppercase text-white/30 mb-2">Catalogue</p>
-            <h1 className="font-display text-4xl italic text-white">Products</h1>
+            <h1 className="font-heading text-5xl text-white">Products</h1>
           </div>
           <Link to="/dashboard/products/new">
             <Button className="gap-2 h-11 text-sm font-bold"><Plus className="w-4 h-4" />New Product</Button>
@@ -57,13 +57,13 @@ export function DashboardProducts() {
         {/* Mobile cards */}
         <div className="lg:hidden space-y-3">
           {loading ? <p className="font-mono text-sm text-white/25 animate-pulse py-6">Loading…</p>
-          : filtered.length === 0 ? <p className="font-display italic text-2xl text-white/28 py-10 text-center">No products found.</p>
+          : filtered.length === 0 ? <p className="font-sans text-xl text-white/28 py-10 text-center">No products found.</p>
           : filtered.map(p => (
             <Link key={p.id} to={`/dashboard/products/${p.id}`}
               className="block border border-white/10 p-5 hover:border-white/25 hover:bg-white/[0.02] transition-colors group">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-xl text-white truncate">{p.name}</p>
+                  <p className="font-sans text-base font-semibold text-white truncate">{p.name}</p>
                   <p className="font-mono text-sm text-white/38 mt-0.5">{p.slug}</p>
                   <div className="flex items-center gap-2.5 mt-3 flex-wrap">
                     <span className="font-mono text-xs tracking-widest uppercase text-white/45 border border-white/12 px-2.5 py-1 capitalize">{p.category}</span>
@@ -94,11 +94,11 @@ export function DashboardProducts() {
               {loading ? (
                 <tr><td colSpan={6} className="px-5 py-14 text-center font-mono text-sm text-white/25 animate-pulse">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={6} className="px-5 py-14 text-center font-display italic text-2xl text-white/25">No products found.</td></tr>
+                <tr><td colSpan={6} className="px-5 py-14 text-center font-sans text-xl text-white/25">No products found.</td></tr>
               ) : filtered.map(p => (
                 <tr key={p.id} className="border-b border-white/5 hover:bg-white/[0.025] transition-colors group">
                   <td className="px-5 py-4">
-                    <p className="font-display text-xl text-white">{p.name}</p>
+                    <p className="font-sans text-base font-semibold text-white">{p.name}</p>
                     <p className="font-mono text-sm text-white/35 mt-0.5">{p.slug}</p>
                   </td>
                   <td className="px-5 py-4">

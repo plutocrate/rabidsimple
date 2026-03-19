@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <p className="font-heading text-5xl tracking-wider mb-4">RABID</p>
-            <p className="font-display text-base text-white/40 italic leading-relaxed">
+            <p className="font-sans text-base text-white/50 leading-relaxed">
               Handwired split keyboards. Built obsessively in India.
             </p>
           </div>
@@ -23,7 +23,7 @@ export function Footer() {
               <ul className="space-y-3">
                 {col.links.map(l => (
                   <li key={l.label}>
-                    <Link to={l.href} className="font-display text-base text-white/50 hover:text-white transition-colors">{l.label}</Link>
+                    <Link to={l.href} className="font-sans text-base text-white/55 hover:text-white transition-colors">{l.label}</Link>
                   </li>
                 ))}
               </ul>

@@ -37,7 +37,7 @@ export function CheckoutPage() {
       <PageLayout>
         <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-5">
           <ShoppingBag className="w-16 h-16 text-white/15" />
-          <p className="font-display text-3xl italic text-white/40">Your cart is empty.</p>
+          <p className="font-sans text-2xl font-semibold text-white/40">Your cart is empty.</p>
           <Link to="/shop"><Button size="lg">Browse Shop</Button></Link>
         </div>
       </PageLayout>
@@ -77,7 +77,7 @@ export function CheckoutPage() {
             </div>
             <div>
               <h1 className="font-heading text-6xl text-white mb-3">Order Placed</h1>
-              <p className="font-display text-xl italic text-white/55 max-w-md">
+              <p className="font-sans text-lg text-white/60 max-w-md">
                 We've received your order. We'll be in touch within 24 hours to confirm your build.
               </p>
             </div>
@@ -237,7 +237,7 @@ export function CheckoutPage() {
                       }
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-display text-lg text-white truncate">{item.product.name}</p>
+                      <p className="font-sans font-semibold text-lg text-white truncate">{item.product.name}</p>
                       <p className="font-mono text-xs text-white/40 mt-0.5">Qty: {item.quantity}</p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {Object.entries(item.selectedVariants).slice(0, 2).map(([k, v]) => (
