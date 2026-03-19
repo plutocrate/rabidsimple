@@ -85,6 +85,7 @@ export interface Address {
   state: string
   zip: string
   country: string
+  notes?: string
 }
 
 // ─────────────────────────────────────────────
