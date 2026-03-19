@@ -75,20 +75,18 @@ export function ServicesPage() {
             <motion.div key={svc.title}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07, duration: 0.5 }}
-              className="bg-background p-8 sm:p-10 group hover:bg-white/[0.03] transition-colors">
-              <div className="flex items-start justify-between mb-6">
-                <svc.icon className="w-7 h-7 text-white/25 group-hover:text-white/60 transition-colors" />
-                <span className="font-mono text-sm tracking-widest text-white/40 border border-white/15 px-3 py-1.5">{svc.price}</span>
-              </div>
+              className="bg-background p-8 sm:p-10 group hover:bg-white/[0.03] transition-colors flex flex-col">
+              <svc.icon className="w-7 h-7 text-white/25 group-hover:text-white/60 transition-colors mb-6" />
               <h3 className="font-display text-3xl text-white mb-3">{svc.title}</h3>
               <p className="font-mono text-sm text-white/45 leading-relaxed mb-5">{svc.desc}</p>
-              <ul className="space-y-2">
+              <ul className="space-y-2 mb-6">
                 {svc.bullets.map(b => (
                   <li key={b} className="flex items-center gap-2.5 font-mono text-sm text-white/35">
                     <span className="w-1.5 h-1.5 rounded-full bg-white/30 flex-shrink-0" />{b}
                   </li>
                 ))}
               </ul>
+              <span className="font-mono text-sm tracking-widest text-white/40 border border-white/15 px-3 py-1.5 self-start">{svc.price}</span>
             </motion.div>
           ))}
         </div>
