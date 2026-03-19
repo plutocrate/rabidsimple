@@ -27,13 +27,13 @@ export function Navbar() {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
       )}>
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 h-18 flex items-center justify-between relative" style={{ height: '72px' }}>
-          <Link to="/" className="font-heading text-4xl tracking-[0.1em] text-white hover:opacity-75 transition-opacity select-none">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative" style={{ height: '72px' }}>
+          <Link to="/" className="font-heading text-3xl sm:text-4xl tracking-[0.1em] text-white hover:opacity-75 transition-opacity select-none">
             RABID
           </Link>
 
-          {/* Desktop nav — absolutely centered */}
-          <nav className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
+          {/* Desktop nav — absolutely centered, only shown on lg+ */}
+          <nav className="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
             <Link to="/shop" className={cn('font-mono text-sm tracking-widest uppercase transition-colors font-semibold',
               location.pathname.startsWith('/shop') || location.pathname.startsWith('/product')
                 ? 'text-white' : 'text-white/55 hover:text-white')}>
@@ -45,9 +45,22 @@ export function Navbar() {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-5">
+          {/* Tablet nav — inline links (md to lg) */}
+          <nav className="hidden md:flex lg:hidden items-center gap-6 ml-6">
+            <Link to="/shop" className={cn('font-mono text-xs tracking-widest uppercase transition-colors font-semibold',
+              location.pathname.startsWith('/shop') || location.pathname.startsWith('/product')
+                ? 'text-white' : 'text-white/55 hover:text-white')}>
+              Shop
+            </Link>
+            <Link to="/services" className={cn('font-mono text-xs tracking-widest uppercase transition-colors font-semibold',
+              location.pathname === '/services' ? 'text-white' : 'text-white/55 hover:text-white')}>
+              Services
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
             {isAuthenticated && isAdmin && (
-              <Link to="/dashboard" className="hidden md:block font-mono text-sm tracking-widest uppercase text-white/40 hover:text-white transition-colors">
+              <Link to="/dashboard" className="hidden md:block font-mono text-xs tracking-widest uppercase text-white/40 hover:text-white transition-colors">
                 Admin
               </Link>
             )}
@@ -59,27 +72,28 @@ export function Navbar() {
                       <span className="font-mono text-[10px] text-white/60 uppercase">{user?.name?.[0] ?? 'U'}</span>
                     </div>
                 }
-                <span className="font-mono text-xs tracking-widest uppercase text-white/50">{user?.name?.split(' ')[0]}</span>
+                <span className="hidden lg:inline font-mono text-xs tracking-widest uppercase text-white/50">{user?.name?.split(' ')[0]}</span>
               </Link>
             )}
             {isAuthenticated && !isAdmin && (
-              <button onClick={logout} className="hidden md:flex items-center gap-1.5 font-mono text-sm tracking-widest uppercase text-white/40 hover:text-white transition-colors">
-                <LogOut className="w-3.5 h-3.5" /> Sign Out
+              <button onClick={logout} className="hidden md:flex items-center gap-1.5 font-mono text-xs tracking-widest uppercase text-white/40 hover:text-white transition-colors">
+                <LogOut className="w-3.5 h-3.5" /> <span className="hidden lg:inline">Sign Out</span>
               </button>
             )}
             {!isAuthenticated && (
-              <Link to="/auth/login" className="hidden md:block font-mono text-sm tracking-widest uppercase text-white/40 hover:text-white transition-colors">
+              <Link to="/auth/login" className="hidden md:block font-mono text-xs tracking-widest uppercase text-white/40 hover:text-white transition-colors">
                 Sign In
               </Link>
             )}
             <button onClick={toggleCart} className="relative flex items-center justify-center w-10 h-10 text-white/65 hover:text-white transition-colors">
-              <ShoppingBag className="w-6 h-6" />
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
               {count > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-white text-black font-mono text-[10px] font-bold flex items-center justify-center rounded-full">
                   {count}
                 </span>
               )}
             </button>
+            {/* Hamburger — shown on mobile only (< md) */}
             <button onClick={() => setMenuOpen(v => !v)} className="md:hidden text-white/65 hover:text-white transition-colors p-1">
               {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -87,7 +101,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Mobile overlay menu */}
+      {/* Mobile overlay menu — only on < md */}
       <div className={cn(
         'fixed inset-0 z-40 bg-black flex flex-col md:hidden transition-all duration-300',
         menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -101,6 +115,7 @@ export function Navbar() {
             { href: '/shop', label: 'Shop' },
             { href: '/services', label: 'Services' },
             ...(isAuthenticated && isAdmin ? [{ href: '/dashboard', label: 'Admin Dashboard' }] : []),
+            ...(isAuthenticated && !isAdmin ? [{ href: '/account', label: user?.name?.split(' ')[0] ?? 'Account' }] : []),
             ...(!isAuthenticated ? [{ href: '/auth/login', label: 'Sign In' }] : []),
           ].map(l => (
             <Link key={l.href} to={l.href}
@@ -108,6 +123,12 @@ export function Navbar() {
               {l.label}
             </Link>
           ))}
+          {isAuthenticated && !isAdmin && (
+            <button onClick={() => { logout(); setMenuOpen(false) }}
+              className="font-mono text-xl tracking-widest uppercase text-white/40 hover:text-white py-5 border-b border-white/8 transition-colors text-left flex items-center gap-3">
+              <LogOut className="w-4 h-4" /> Sign Out
+            </button>
+          )}
         </div>
       </div>
     </>

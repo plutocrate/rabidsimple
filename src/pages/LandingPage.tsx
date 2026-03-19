@@ -18,10 +18,10 @@ export function LandingPage() {
 
   return (
     <PageLayout>
-      {/* ── Mobile layout: 65vh canvas, then content below ── */}
+      {/* ── Mobile / Tablet layout: canvas on top, content below ── */}
       <section className="flex flex-col lg:hidden min-h-screen bg-[#080808]">
-        {/* 3D canvas — 65% of viewport height */}
-        <div className="w-full flex-shrink-0" style={{ height: '65vh' }}>
+        {/* 3D canvas — 40vh on mobile, 50vh on tablet */}
+        <div className="w-full flex-shrink-0 h-[40vh] md:h-[50vh]">
           <LandingViewer modelPath={MODEL_PATH} />
         </div>
 
