@@ -18,8 +18,7 @@ const BANNER_H = 40
 
 export function PageLayout({ children, hideFooter }: PageLayoutProps) {
   const { pathname } = useLocation()
-  const { settings, fetch, loaded } = useSiteSettings()
-  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const { settings, fetch, loaded, bannerDismissed, dismissBanner } = useSiteSettings()
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -68,7 +67,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
 
                 {/* Dismiss */}
                 <button
-                  onClick={() => setBannerDismissed(true)}
+                  onClick={() => dismissBanner()}
                   className="ml-4 shrink-0 w-5 h-5 flex items-center justify-center text-white/20 hover:text-white/60 transition-colors"
                   aria-label="Dismiss banner"
                 >

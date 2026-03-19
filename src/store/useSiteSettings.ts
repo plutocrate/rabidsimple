@@ -9,12 +9,17 @@ import type { SiteSettings } from '@/lib/firestore'
 interface SiteSettingsStore {
   settings: SiteSettings
   loaded: boolean
+  bannerDismissed: boolean
   fetch: () => Promise<void>
+  dismissBanner: () => void
 }
 
 export const useSiteSettings = create<SiteSettingsStore>((set, get) => ({
   settings: defaultSiteSettings,
   loaded: false,
+  bannerDismissed: false,
+
+  dismissBanner: () => set({ bannerDismissed: true }),
 
   fetch: async () => {
     try {
