@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useCartStore } from '@/store/useCartStore'
 
 import { LandingPage }           from '@/pages/LandingPage'
 import { ShopPage }              from '@/pages/shop/ShopPage'
@@ -8,6 +9,7 @@ import { ProductPage }           from '@/pages/shop/ProductPage'
 import { ServicesPage }          from '@/pages/ServicesPage'
 import { CheckoutPage }          from '@/pages/shop/CheckoutPage'
 import { LoginPage }             from '@/pages/auth/LoginPage'
+import { AccountPage }           from '@/pages/account/AccountPage'
 import { AdminLoginPage }        from '@/pages/auth/AdminLoginPage'
 import { DashboardOverview }     from '@/pages/dashboard/DashboardOverview'
 import { DashboardProducts }     from '@/pages/dashboard/DashboardProducts'
@@ -44,6 +46,7 @@ function RedirectIfAuth({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { init } = useAuthStore()
+  const { validateCart } = useCartStore()
   useEffect(() => { const unsub = init(); return unsub }, [init])
 
   return (
@@ -66,6 +69,7 @@ export default function App() {
 
         {/* User auth — Google only */}
         <Route path="/auth/login" element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
+        <Route path="/account"      element={<RequireAuth><AccountPage /></RequireAuth>} />
 
         {/* Hidden admin login — not linked anywhere */}
         <Route path="/rbx-portal" element={<AdminLoginPage />} />

@@ -3,15 +3,14 @@ import { useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, Check, ChevronLeft, ChevronRight, Box, Image } from 'lucide-react'
 import { PageLayout } from '@/components/layout/PageLayout'
-import { ProductViewer } from '@/components/3d/ProductViewer'
-import { CosmosViewer } from '@/components/3d/CosmosViewer'
+import { ModelViewer } from '@/components/3d/ModelViewer'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useProductStore } from '@/store/useProductStore'
 import { useCartStore } from '@/store/useCartStore'
 import { formatPrice, cn } from '@/lib/utils'
-import { productsService, cosmosService } from '@/lib/firestore'
+import { productsService } from '@/lib/firestore'
 import type { Product, ProductVariant } from '@/types'
 
 // ─── Variant Picker ───────────────────────────────────────────────────────────
@@ -143,7 +142,6 @@ export function ProductPage() {
   const { addItem }   = useCartStore()
 
   const [fetched, setFetched]       = useState<Product | null>(null)
-  const [cosmosUrl, setCosmosUrl]   = useState<string | null>(null)
   const [selections, setSelections] = useState<Record<string, string>>({})
   const [added, setAdded]           = useState(false)
   const [viewMode, setViewMode]     = useState<ViewMode>('images')
@@ -154,12 +152,6 @@ export function ProductPage() {
   }, [slug])
 
   const product = fetched ?? getBySlug(slug ?? '')
-
-  useEffect(() => {
-    if (!product) return
-    const id = (product as any).cosmosConfigId
-    if (id) cosmosService.getById(id).then(c => { if (c) setCosmosUrl(c.iframeUrl) }).catch(() => {})
-  }, [product])
 
   useEffect(() => {
     if (!product) return
@@ -204,7 +196,7 @@ export function ProductPage() {
     </PageLayout>
   )
 
-  const has3D       = !!(cosmosUrl || product.modelPath)
+  const has3D = !!product?.modelPath
   const hasImages   = (product.images?.length ?? 0) > 0
   const hasVariants = (product.variants?.length ?? 0) > 0
   const showToggle  = has3D && hasImages
@@ -339,10 +331,8 @@ export function ProductPage() {
                 style={{ height: 'clamp(260px, 42vw, 520px)' }}>
                 {viewMode === 'images' && hasImages
                   ? <ImageSlideshow images={product.images} />
-                  : has3D
-                    ? cosmosUrl
-                      ? <CosmosViewer url={cosmosUrl} className="w-full h-full" />
-                      : <ProductViewer modelPath={product.modelPath} partColors={partColors} />
+                  : has3D && product?.modelPath
+                    ? <ModelViewer modelPath={product.modelPath} className="w-full h-full" />
                     : <ImageSlideshow images={product.images} />
                 }
               </div>

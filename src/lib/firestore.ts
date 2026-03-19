@@ -121,6 +121,9 @@ export interface SiteSettings {
   announcementBanner: string
   announcementEnabled: boolean
   footerTagline: string
+  shopClosed: boolean
+  shopClosedMessage: string
+  heroModelPath?: string   // path to JSON model in /public, e.g. /heroMedia/corne_hero.json
 }
 
 export const defaultSiteSettings: SiteSettings = {
@@ -132,6 +135,9 @@ export const defaultSiteSettings: SiteSettings = {
   announcementBanner: '',
   announcementEnabled: false,
   footerTagline: 'Crafted by hand. Flashed with intent.',
+  shopClosed: false,
+  shopClosedMessage: 'Shop will open soon.',
+  heroModelPath: undefined,
 }
 
 export const siteSettingsService = {

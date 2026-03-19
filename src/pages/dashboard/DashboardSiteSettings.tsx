@@ -4,21 +4,21 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { siteSettingsService, cosmosService, defaultSiteSettings, uploadHeroMedia } from '@/lib/firestore'
-import type { SiteSettings, CosmosConfig } from '@/lib/firestore'
+import { siteSettingsService, defaultSiteSettings } from '@/lib/firestore'
+import type { SiteSettings } from '@/lib/firestore'
 import { Save, Check, Upload, Wifi, WifiOff } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function DashboardSiteSettings() {
   const [settings, setSettings]           = useState<SiteSettings>(defaultSiteSettings)
-  const [cosmosConfigs, setCosmosConfigs] = useState<CosmosConfig[]>([])
   const [isLoading, setIsLoading]         = useState(true)
   const [saving, setSaving]               = useState(false)
   const [saved, setSaved]                 = useState(false)
   const [error, setError]                 = useState('')
 
   useEffect(() => {
-    Promise.all([siteSettingsService.get(), cosmosService.getAll()])
-      .then(([s, cfgs]) => { setSettings(s); setCosmosConfigs(cfgs) })
+    siteSettingsService.get()
+      .then(s => setSettings(s))
       .catch(() => {}).finally(() => setIsLoading(false))
   }, [])
 
@@ -80,17 +80,62 @@ export function DashboardSiteSettings() {
               </div>
             </div>
             <div>
-              <Label className="font-mono text-[9px] tracking-widest uppercase text-white/30">Hero Cosmos Model</Label>
-              <select value={settings.cosmosConfigId ?? ''} onChange={e => update({ cosmosConfigId: e.target.value || null })}
-                className="mt-1 w-full bg-[#0a0a0a] border border-white/10 px-3 py-2 font-mono text-sm text-white/70 focus:outline-none">
-                <option value="">— Fallback Three.js viewer —</option>
-                {cosmosConfigs.map(cfg => <option key={cfg.id} value={cfg.id}>{cfg.name}</option>)}
+              <Label className="font-mono text-[9px] tracking-widest uppercase text-white/30">Hero 3D Model</Label>
+              <select
+                value={(settings as any).heroModelPath ?? ''}
+                onChange={e => update({ heroModelPath: e.target.value || undefined } as any)}
+                className="mt-1 w-full bg-[#0a0a0a] border border-white/10 px-3 py-2 font-mono text-sm text-white/70 focus:outline-none"
+              >
+                <option value="">— corne_hero.json (default) —</option>
+                <option value="/heroMedia/corne_hero.json">heroMedia/corne_hero.json</option>
               </select>
+              <p className="font-mono text-[10px] text-white/25 mt-1">
+                Add models to <span className="text-white/40">public/heroMedia/</span> via <span className="text-white/40">bash scripts/convert-model.sh</span>
+              </p>
             </div>
           </div>
         </section>
 
         <Separator className="mb-8 opacity-10" />
+
+        {/* Shop Closed */}
+        <section className="mb-8 border border-white/10 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="font-mono text-sm tracking-widest uppercase text-white/70 font-semibold">Shop Status</p>
+              <p className="font-mono text-[10px] text-white/30 mt-1">When closed, visitors see a "coming soon" page instead of products</p>
+            </div>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <span className="font-mono text-xs tracking-widest uppercase text-white/40">
+                {settings.shopClosed ? 'CLOSED' : 'OPEN'}
+              </span>
+              <div
+                onClick={() => update({ shopClosed: !settings.shopClosed })}
+                className={cn(
+                  'relative w-12 h-6 rounded-full transition-colors cursor-pointer',
+                  settings.shopClosed ? 'bg-red-500/60' : 'bg-green-500/50'
+                )}
+              >
+                <div className={cn(
+                  'absolute top-1 w-4 h-4 rounded-full bg-white transition-all',
+                  settings.shopClosed ? 'right-1' : 'left-1'
+                )} />
+              </div>
+            </label>
+          </div>
+          {settings.shopClosed && (
+            <div>
+              <Label className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1.5 block">
+                Closed Message
+              </Label>
+              <Input
+                value={settings.shopClosedMessage ?? ''}
+                onChange={e => update({ shopClosedMessage: e.target.value })}
+                placeholder="Shop will open soon."
+              />
+            </div>
+          )}
+        </section>
 
         <section className="mb-8">
           <p className="font-mono text-[10px] tracking-widest uppercase text-white/25 mb-4 flex items-center gap-2">

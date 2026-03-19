@@ -9,7 +9,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { itemCount, toggleCart } = useCartStore()
-  const { isAuthenticated, isAdmin, logout } = useAuthStore()
+  const { isAuthenticated, isAdmin, logout, user } = useAuthStore()
   const location = useLocation()
   const count = itemCount()
 
@@ -27,13 +27,13 @@ export function Navbar() {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
       )}>
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 h-18 flex items-center justify-between" style={{ height: '72px' }}>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 h-18 flex items-center justify-between relative" style={{ height: '72px' }}>
           <Link to="/" className="font-heading text-4xl tracking-[0.1em] text-white hover:opacity-75 transition-opacity select-none">
             RABID
           </Link>
 
-          {/* Desktop nav — only 2 links */}
-          <nav className="hidden md:flex items-center gap-10">
+          {/* Desktop nav — absolutely centered */}
+          <nav className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
             <Link to="/shop" className={cn('font-mono text-sm tracking-widest uppercase transition-colors font-semibold',
               location.pathname.startsWith('/shop') || location.pathname.startsWith('/product')
                 ? 'text-white' : 'text-white/55 hover:text-white')}>
@@ -49,6 +49,17 @@ export function Navbar() {
             {isAuthenticated && isAdmin && (
               <Link to="/dashboard" className="hidden md:block font-mono text-sm tracking-widest uppercase text-white/40 hover:text-white transition-colors">
                 Admin
+              </Link>
+            )}
+            {isAuthenticated && !isAdmin && (
+              <Link to="/account" className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity">
+                {user?.avatar
+                  ? <img src={user.avatar} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" className="w-7 h-7 rounded-full border border-white/20 object-cover" />
+                  : <div className="w-7 h-7 rounded-full border border-white/20 bg-white/10 flex items-center justify-center">
+                      <span className="font-mono text-[10px] text-white/60 uppercase">{user?.name?.[0] ?? 'U'}</span>
+                    </div>
+                }
+                <span className="font-mono text-xs tracking-widest uppercase text-white/50">{user?.name?.split(' ')[0]}</span>
               </Link>
             )}
             {isAuthenticated && !isAdmin && (

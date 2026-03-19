@@ -1,32 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { LandingViewer } from '@/components/3d/LandingViewer'
-import { CosmosViewer } from '@/components/3d/CosmosViewer'
+import { useSiteSettings } from '@/store/useSiteSettings'
 import { Button } from '@/components/ui/button'
-import { siteSettingsService, cosmosService } from '@/lib/firestore'
-import type { SiteSettings } from '@/lib/firestore'
 
-const MODEL_PATH = '/heroMedia/corne_hero.json'
+const DEFAULT_MODEL = '/heroMedia/corne_hero.json'
 
 export function LandingPage() {
-  const [settings, setSettings]   = useState<SiteSettings | null>(null)
-  const [cosmosUrl, setCosmosUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    siteSettingsService.get().then(async s => {
-      setSettings(s)
-      if (s.cosmosConfigId) {
-        const cfg = await cosmosService.getById(s.cosmosConfigId)
-        if (cfg) setCosmosUrl(cfg.iframeUrl)
-      }
-    }).catch(() => {})
-  }, [])
-
-  const heroTitle    = settings?.heroTitle    ?? 'RABID'
-  const heroSubtitle = settings?.heroSubtitle ?? 'Premium split keyboards for those who refuse to compromise on how they work.'
+  const { settings, fetch } = useSiteSettings()
+  useEffect(() => { fetch() }, [])
+  const MODEL_PATH = settings.heroModelPath || DEFAULT_MODEL
+  const heroTitle    = settings.heroTitle    || 'RABID'
+  const heroSubtitle = settings.heroSubtitle || 'Premium split keyboards for those who refuse to compromise on how they work.'
 
   return (
     <PageLayout>
@@ -34,10 +22,7 @@ export function LandingPage() {
       <section className="flex flex-col lg:hidden min-h-screen bg-[#080808]">
         {/* 3D canvas — 65% of viewport height */}
         <div className="w-full flex-shrink-0" style={{ height: '65vh' }}>
-          {cosmosUrl
-            ? <CosmosViewer url={cosmosUrl} className="w-full h-full" />
-            : <LandingViewer modelPath={MODEL_PATH} />
-          }
+          <LandingViewer modelPath={MODEL_PATH} />
         </div>
 
         {/* Content — remaining 35vh + overflow */}
@@ -79,10 +64,7 @@ export function LandingPage() {
       <section className="hidden lg:flex min-h-screen">
         {/* Viewer — 55% sticky */}
         <div className="w-[55%] bg-[#0a0a0a] sticky top-0 h-screen flex-shrink-0">
-          {cosmosUrl
-            ? <CosmosViewer url={cosmosUrl} className="w-full h-full" />
-            : <LandingViewer modelPath={MODEL_PATH} />
-          }
+          <LandingViewer modelPath={MODEL_PATH} />
         </div>
 
         {/* Right panel */}

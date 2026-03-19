@@ -13,6 +13,11 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, googleProvider, db } from '@/lib/firebase'
 import type { User } from '@/types'
 
+// Lazy import to avoid circular dependency
+function getCartStore() {
+  return import('@/store/useCartStore').then(m => m.useCartStore.getState())
+}
+
 interface AuthStore {
   user: User | null
   firebaseUser: FirebaseUser | null
@@ -29,7 +34,14 @@ interface AuthStore {
 async function syncUserProfile(fbUser: FirebaseUser): Promise<User> {
   const ref = doc(db, 'users', fbUser.uid)
   const snap = await getDoc(ref)
-  if (snap.exists()) return { id: fbUser.uid, ...snap.data() } as User
+  if (snap.exists()) {
+    const data = snap.data()
+    // Convert Firestore Timestamp to ISO string
+    const createdAt = data.createdAt?.toDate
+      ? data.createdAt.toDate().toISOString()
+      : data.createdAt ?? new Date().toISOString()
+    return { id: fbUser.uid, ...data, createdAt } as User
+  }
   const newUser: User = {
     id: fbUser.uid,
     email: fbUser.email ?? '',
@@ -56,6 +68,8 @@ export const useAuthStore = create<AuthStore>()(
           if (fbUser) {
             const user = await syncUserProfile(fbUser)
             set({ firebaseUser: fbUser, user, isAuthenticated: true, isAdmin: user.role === 'admin' || user.role === 'team' })
+            // Sync cart with cloud
+            getCartStore().then(cart => cart.loadFromCloud(fbUser.uid))
           } else {
             set({ firebaseUser: null, user: null, isAuthenticated: false, isAdmin: false })
           }
@@ -93,6 +107,8 @@ export const useAuthStore = create<AuthStore>()(
       logout: async () => {
         await signOut(auth)
         set({ user: null, firebaseUser: null, isAuthenticated: false, isAdmin: false })
+        // Clear local cart on logout
+        getCartStore().then(cart => cart.clearCart())
       },
     }),
     { name: 'rabid_auth', partialize: (s) => ({ user: s.user }) }

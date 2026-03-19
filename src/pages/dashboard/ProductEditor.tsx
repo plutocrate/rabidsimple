@@ -12,8 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { productsService, cosmosService, uploadProductImage } from '@/lib/firestore'
-import type { CosmosConfig } from '@/lib/firestore'
+import { productsService, uploadProductImage } from '@/lib/firestore'
 import { formatPrice, cn } from '@/lib/utils'
 import {
   ArrowLeft, Save, Trash2, Plus, X, GripVertical,
@@ -373,12 +372,6 @@ export function ProductEditor() {
   const [deleting, setDeleting]   = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle')
   const [error, setError]         = useState('')
-  const [cosmosConfigs, setCosmosConfigs] = useState<CosmosConfig[]>([])
-
-  // load cosmos configs for the selector
-  useEffect(() => {
-    cosmosService.getAll().then(setCosmosConfigs).catch(() => {})
-  }, [])
 
   // load existing product
   useEffect(() => {
@@ -406,7 +399,6 @@ export function ProductEditor() {
         specs:    product.specs    ?? {},
       }
       // Remove empty/undefined optional fields
-      if (!safeProduct.cosmosConfigId)   delete safeProduct.cosmosConfigId
       if (!safeProduct.modelPath)        delete safeProduct.modelPath
       if (!safeProduct.subtitle)         delete safeProduct.subtitle
       if (!safeProduct.longDescription)  delete safeProduct.longDescription
@@ -574,18 +566,26 @@ export function ProductEditor() {
           </Section>
 
           {/* ── 4. 3D MODEL ── */}
-          <Section title="3D Model (Cosmos)">
-            <Field label="Cosmos Config" hint="The keyboard model shown in the product page viewer. Manage configs under Dashboard → Keyboard Models.">
-              <select value={(product as any).cosmosConfigId ?? ''}
-                onChange={e => patch({ cosmosConfigId: e.target.value || undefined } as any)}
-                className="w-full bg-[#0a0a0a] border border-white/10 px-3 py-2 font-mono text-sm text-white/70 focus:outline-none h-10">
-                <option value="">— None (fallback Three.js viewer) —</option>
-                {cosmosConfigs.map(cfg => <option key={cfg.id} value={cfg.id}>{cfg.name}</option>)}
-              </select>
-            </Field>
-            <Field label="Three.js Model Path" hint={`Fallback if no Cosmos config. Relative to /public. Convention: /productMedia/${product.slug || '<slug>'}/model.json`}>
-              <Input value={product.modelPath ?? ''} onChange={e => patch({ modelPath: e.target.value })}
-                placeholder="/assets/models/keyboard_model.json" />
+          <Section title="3D Model">
+            <Field label="Model Path" hint="Path to a JSON model in /public. Use the dropdown for known models or type a custom path.">
+              <div className="space-y-2">
+                <select
+                  value={product.modelPath ?? ''}
+                  onChange={e => patch({ modelPath: e.target.value || undefined })}
+                  className="w-full bg-[#0a0a0a] border border-white/10 px-3 py-2 font-mono text-sm text-white/70 focus:outline-none h-10"
+                >
+                  <option value="">— No 3D model (shows placeholder) —</option>
+                  <option value="/heroMedia/corne_hero.json">heroMedia / corne_hero.json</option>
+                </select>
+                <Input
+                  value={product.modelPath ?? ''}
+                  onChange={e => patch({ modelPath: e.target.value || undefined })}
+                  placeholder={`/productMedia/${product.slug || 'your-slug'}/model.json`}
+                />
+                <p className="font-mono text-[10px] text-white/25">
+                  Convert models: <span className="text-white/40">bash scripts/convert-model.sh</span> → save to <span className="text-white/40">public/productMedia/{'{slug}'}/model.json</span>
+                </p>
+              </div>
             </Field>
           </Section>
 

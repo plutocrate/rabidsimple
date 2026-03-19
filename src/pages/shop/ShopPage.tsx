@@ -8,6 +8,9 @@ import { PageLayout } from '@/components/layout/PageLayout'
 import { ProductCard } from '@/components/shop/ProductCard'
 import { FilterBar } from '@/components/shop/FilterBar'
 import { useProductStore } from '@/store/useProductStore'
+import { LandingViewer } from '@/components/3d/LandingViewer'
+import { useSiteSettings } from '@/store/useSiteSettings'
+import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/lib/utils'
 
 type Tab = 'full-build' | 'barebone' | 'accessory'
@@ -21,6 +24,10 @@ const TABS: { key: Tab; label: string; desc: string }[] = [
 export function ShopPage() {
   const [activeTab, setActiveTab] = useState<Tab>('full-build')
   const { fetchProducts, filteredProducts, activeFilters, clearFilters } = useProductStore()
+  const { settings, fetch: fetchSettings } = useSiteSettings()
+  const { isAdmin, isLoading: authLoading } = useAuthStore()
+
+  useEffect(() => { fetchSettings() }, [])
 
   useEffect(() => {
     clearFilters()
@@ -33,6 +40,31 @@ export function ShopPage() {
   // Map tab to category: full-build = 'keyboard', barebone = 'barebone', accessory = 'accessory'
   const tabCategory = { 'full-build': 'keyboard', 'barebone': 'barebone', 'accessory': 'accessory' } as Record<Tab, string>
   const products = allProducts.filter(p => p.category === tabCategory[activeTab])
+
+  if (settings.shopClosed && !isAdmin && !authLoading) {
+    return (
+      <PageLayout hideFooter>
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#060606]">
+          {/* Live 3D keyboard — same as hero */}
+          <div className="absolute inset-0">
+            <LandingViewer modelPath={settings.heroModelPath || '/heroMedia/corne_hero.json'} />
+          </div>
+          {/* Dark overlay so text is readable */}
+          <div className="absolute inset-0 bg-black/55 z-10" />
+          {/* Message */}
+          <div className="relative z-20 text-center px-6 max-w-lg">
+            <p className="font-mono text-xs tracking-widest uppercase text-white/40 mb-6">RABID</p>
+            <h1 className="font-heading text-[clamp(3rem,10vw,6rem)] leading-none text-white mb-6">
+              {settings.shopClosedMessage || 'Shop will open soon.'}
+            </h1>
+            <p className="font-display text-lg italic text-white/50">
+              We're preparing something worth waiting for.
+            </p>
+          </div>
+        </div>
+      </PageLayout>
+    )
+  }
 
   return (
     <PageLayout>
