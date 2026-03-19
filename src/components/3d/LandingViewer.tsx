@@ -138,7 +138,7 @@ function lerpColors(
 
 // ─── Color lerp controller ──────────────────────────────────────────────────
 function useAutoLerp() {
-  const [colors, setColors] = useState(paletteToColors(PALETTES[0]))
+  const [colors, setColors] = useState<Record<string, string>>(paletteToColors(PALETTES[0]))
   const [active, setActive] = useState(0)
   const fromRef   = useRef(paletteToColors(PALETTES[0]))
   const toRef     = useRef(paletteToColors(PALETTES[1]))
