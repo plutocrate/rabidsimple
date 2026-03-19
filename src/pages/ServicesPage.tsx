@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import { motion } from 'framer-motion'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { Button } from '@/components/ui/button'
@@ -6,6 +7,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Code, Zap, Cpu, Box, Send, Check } from 'lucide-react'
+
+const EMAILJS_SERVICE_ID  = 'service_06d6y58'
+const EMAILJS_TEMPLATE_ID = 'template_kfcibfh'
+const EMAILJS_PUBLIC_KEY  = 'HgsszHkvHyhtMtI--'
 
 const SERVICES = [
   {
@@ -30,7 +35,7 @@ const SERVICES = [
   },
 ]
 
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL ?? 'hello@rabid.co.in'
+const CONTACT_EMAIL = 'hello@rabid.co.in'
 
 export function ServicesPage() {
   const [form, setForm]     = useState({ name: '', email: '', service: '', message: '' })
@@ -43,9 +48,18 @@ export function ServicesPage() {
     e.preventDefault()
     setStatus('sending')
     try {
-      const subject = encodeURIComponent(`[RABID Services] ${form.service} — ${form.name}`)
-      const body    = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nService: ${form.service}\n\n${form.message}`)
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name:    form.name,
+          from_email:   form.email,
+          service_type: form.service,
+          message:      form.message,
+          reply_to:     form.email,
+        },
+        EMAILJS_PUBLIC_KEY
+      )
       setStatus('sent')
       setForm({ name: '', email: '', service: '', message: '' })
     } catch {
@@ -147,7 +161,7 @@ export function ServicesPage() {
 
             {status === 'sent' ? (
               <div className="flex items-center gap-3 font-mono text-sm tracking-widest uppercase text-white/65 border border-white/20 px-5 py-4">
-                <Check className="w-4 h-4" /> Opening your mail client…
+                <Check className="w-4 h-4" /> Message sent — we'll reply within 24 hours.
               </div>
             ) : (
               <Button type="submit" size="lg" className="w-full h-14 text-base gap-3" disabled={status === 'sending'}>

@@ -140,8 +140,8 @@ function lerpColors(
 function useAutoLerp() {
   const [colors, setColors] = useState<Record<string, string>>(paletteToColors(PALETTES[0]))
   const [active, setActive] = useState(0)
-  const fromRef   = useRef(paletteToColors(PALETTES[0]))
-  const toRef     = useRef(paletteToColors(PALETTES[1]))
+  const fromRef   = useRef<Record<string, string>>(paletteToColors(PALETTES[0]))
+  const toRef     = useRef<Record<string, string>>(paletteToColors(PALETTES[1]))
   const tRef      = useRef(0)
   const pauseRef  = useRef(false)   // pause while hovering
   const manualRef = useRef<number | null>(null)
