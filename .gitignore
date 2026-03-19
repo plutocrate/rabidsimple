@@ -73,3 +73,4 @@ coverage/
 *.pem
 *.zip
 *.tar.gz
+.firebase/
