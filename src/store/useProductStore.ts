@@ -1,8 +1,6 @@
 import { create } from 'zustand'
 import type { Product } from '@/types'
 import { productsService } from '@/lib/firestore'
-import { MOCK_PRODUCTS } from '@/lib/mockData'
-import { ALL_TAGS } from '@/lib/mockData'
 
 interface ProductStore {
   products: Product[]
@@ -17,7 +15,7 @@ interface ProductStore {
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
-  products: MOCK_PRODUCTS,
+  products: [],
   activeFilters: [],
   isLoading: false,
   error: null,
@@ -28,9 +26,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const products = category
         ? await productsService.getByCategory(category)
         : await productsService.getAll()
-      set({ products: products.length ? products : MOCK_PRODUCTS })
-    } catch {
-      set({ products: MOCK_PRODUCTS })
+      set({ products })
+    } catch (e: any) {
+      set({ error: e?.message ?? 'Failed to load products', products: [] })
     } finally {
       set({ isLoading: false })
     }

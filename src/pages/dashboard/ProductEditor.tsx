@@ -14,7 +14,6 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { productsService, cosmosService, uploadProductImage } from '@/lib/firestore'
 import type { CosmosConfig } from '@/lib/firestore'
-import { MOCK_PRODUCTS } from '@/lib/mockData'
 import { formatPrice, cn } from '@/lib/utils'
 import {
   ArrowLeft, Save, Trash2, Plus, X, GripVertical,
@@ -365,7 +364,7 @@ function ImagesEditor({ images, slug, onChange }: { images: string[]; slug: stri
 export function ProductEditor() {
   const { id }   = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const isNew    = id === 'new'
+  const isNew    = !id || id === 'new'
 
   const [product, setProduct] = useState<Omit<Product, 'id' | 'createdAt'>>(EMPTY)
   const [productId, setProductId] = useState<string | null>(null)
@@ -383,20 +382,11 @@ export function ProductEditor() {
 
   // load existing product
   useEffect(() => {
-    if (isNew) return
+    if (isNew || !id) return
     setIsLoading(true)
-    // Try Firestore first, fall back to mock
     productsService.getById(id!).then(p => {
       if (p) { const { id: pid, createdAt, ...rest } = p; setProduct(rest); setProductId(pid) }
-      else {
-        // Fall back to mock for development
-        const mock = MOCK_PRODUCTS.find(m => m.id === id || m.slug === id)
-        if (mock) { const { id: pid, createdAt, ...rest } = mock; setProduct(rest); setProductId(pid) }
-      }
-    }).catch(() => {
-      const mock = MOCK_PRODUCTS.find(m => m.id === id || m.slug === id)
-      if (mock) { const { id: pid, createdAt, ...rest } = mock; setProduct(rest); setProductId(pid) }
-    }).finally(() => setIsLoading(false))
+    }).catch(() => {}).finally(() => setIsLoading(false))
   }, [id, isNew])
 
   const patch = useCallback((p: Partial<typeof product>) => {
@@ -404,20 +394,42 @@ export function ProductEditor() {
   }, [])
 
   async function handleSave() {
-    if (!product.name || !product.slug) { setError('Name and slug are required.'); return }
+    if (!product.name?.trim() || !product.slug?.trim()) { setError('Name and slug are required.'); return }
     setSaving(true); setError('')
     try {
+        // Clean undefined/empty fields before sending to Firestore
+      const safeProduct: any = {
+        ...product,
+        images:   product.images   ?? [],
+        tags:     product.tags     ?? [],
+        variants: product.variants ?? [],
+        specs:    product.specs    ?? {},
+      }
+      // Remove empty/undefined optional fields
+      if (!safeProduct.cosmosConfigId)   delete safeProduct.cosmosConfigId
+      if (!safeProduct.modelPath)        delete safeProduct.modelPath
+      if (!safeProduct.subtitle)         delete safeProduct.subtitle
+      if (!safeProduct.longDescription)  delete safeProduct.longDescription
+      if (safeProduct.stockCount === undefined || safeProduct.stockCount === null) delete safeProduct.stockCount
       if (isNew) {
-        const created = await productsService.create(product)
+        // CREATE new product
+        const created = await productsService.create(safeProduct)
+        setProductId(created.id)
         setSaveStatus('saved')
         setTimeout(() => navigate(`/dashboard/products/${created.id}`), 800)
       } else {
-        await productsService.update(productId ?? id!, product)
+        // UPDATE existing — productId is set by the load useEffect
+        const docId = productId || id
+        if (!docId || docId === 'new') {
+          throw new Error('Cannot update: product ID is missing. Try deleting this and creating a new product.')
+        }
+        await productsService.update(docId, safeProduct)
         setSaveStatus('saved')
         setTimeout(() => setSaveStatus('idle'), 2500)
       }
     } catch (e: any) {
-      setError(e?.message ?? 'Save failed')
+      console.error('Save error:', e)
+      setError(e?.message ?? String(e) ?? 'Save failed')
       setSaveStatus('error')
     } finally { setSaving(false) }
   }
@@ -497,7 +509,7 @@ export function ProductEditor() {
               </Field>
               <Field label="Slug *" hint="URL identifier, lowercase, hyphens only">
                 <Input value={product.slug}
-                  onChange={e => patch({ slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
+                  onChange={e => patch({ slug: (e.target.value ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
                   placeholder="dactyl-manuball-pro" />
               </Field>
             </div>
@@ -557,7 +569,7 @@ export function ProductEditor() {
 
           {/* ── 3. IMAGES ── */}
           <Section title="Images">
-            <p className="font-mono text-[11px] text-white/30">First image is the primary/thumbnail. Uploads go to: <span className="text-white/50">productMedia/{slug}/images/</span></p>
+            <p className="font-mono text-[11px] text-white/30">First image is the primary/thumbnail. Uploads go to: <span className="text-white/50">productMedia/{product.slug || '<slug>'}/images/</span></p>
             <ImagesEditor images={product.images} slug={product.slug} onChange={imgs => patch({ images: imgs })} />
           </Section>
 

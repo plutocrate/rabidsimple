@@ -1,36 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/store/useAuthStore'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 export function AdminLoginPage() {
-  const { loginWithEmail, isLoading, isAdmin } = useAuthStore()
+  const { loginWithGoogle, isLoading, isAdmin, isAuthenticated, user } = useAuthStore()
   const navigate = useNavigate()
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError]       = useState('')
+  const [error, setError] = useState('')
 
-  // If already admin, go straight to dashboard
-  if (isAdmin) {
-    navigate('/dashboard', { replace: true })
-    return null
-  }
+  // Already admin → go straight to dashboard
+  useEffect(() => {
+    if (isAdmin) navigate('/dashboard', { replace: true })
+  }, [isAdmin, navigate])
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  // Signed in but NOT admin
+  useEffect(() => {
+    if (isAuthenticated && !isAdmin && !isLoading) {
+      setError(`${user?.email ?? 'This account'} is not authorised as admin.`)
+    }
+  }, [isAuthenticated, isAdmin, isLoading, user])
+
+  async function handleGoogle() {
     setError('')
     try {
-      await loginWithEmail(email, password)
-      // After login, check if the signed-in user is actually admin
-      // useAuthStore sets isAdmin based on Firestore role
-      // We navigate to dashboard — RequireAdmin will bounce non-admins
-      navigate('/dashboard', { replace: true })
+      await loginWithGoogle()
+      // useEffect above handles redirect once isAdmin is true
     } catch (err: any) {
-      // Keep error message vague — don't reveal what's wrong
-      setError('Invalid credentials.')
+      setError('Sign in failed. Try again.')
     }
   }
 
@@ -42,37 +39,10 @@ export function AdminLoginPage() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-sm"
       >
-        {/* No logo or breadcrumb — intentionally bare */}
+        {/* Intentionally bare — no logo, no breadcrumb */}
         <div className="w-2 h-2 bg-white/20 rounded-full mb-16" />
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <Label className="font-mono text-xs tracking-widest uppercase text-white/40 mb-2 block">
-              Email
-            </Label>
-            <Input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-              className="h-12 text-base"
-            />
-          </div>
-          <div>
-            <Label className="font-mono text-xs tracking-widest uppercase text-white/40 mb-2 block">
-              Password
-            </Label>
-            <Input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-              className="h-12 text-base"
-            />
-          </div>
-
+        <div className="space-y-5">
           {error && (
             <p className="font-mono text-sm text-red-400/75 border border-red-500/20 bg-red-900/10 px-4 py-3">
               {error}
@@ -80,13 +50,13 @@ export function AdminLoginPage() {
           )}
 
           <Button
-            type="submit"
-            className="w-full h-14 text-base font-bold mt-2"
+            onClick={handleGoogle}
+            className="w-full h-14 text-base font-bold"
             disabled={isLoading}
           >
-            {isLoading ? '…' : 'Continue'}
+            {isLoading ? '…' : 'Continue with Google'}
           </Button>
-        </form>
+        </div>
       </motion.div>
     </div>
   )

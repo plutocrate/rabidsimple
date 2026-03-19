@@ -7,7 +7,7 @@
 
 import {
   collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-  query, where, orderBy, serverTimestamp, Timestamp
+  query, where, serverTimestamp, Timestamp
 } from 'firebase/firestore'
 import {
   ref, uploadBytes, getDownloadURL, deleteObject, listAll
@@ -31,8 +31,9 @@ function stripUndefined(obj: Record<string, any>): Record<string, any> {
 
 export const productsService = {
   async getAll(): Promise<Product[]> {
-    const snap = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc')))
-    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Product))
+    const snap = await getDocs(collection(db, 'products'))
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Product))
+    return docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   },
 
   async getById(id: string): Promise<Product | null> {
@@ -50,20 +51,22 @@ export const productsService = {
   },
 
   async getByCategory(category: string): Promise<Product[]> {
-    const q = query(collection(db, 'products'), where('category', '==', category), orderBy('createdAt', 'desc'))
+    const q = query(collection(db, 'products'), where('category', '==', category))
     const snap = await getDocs(q)
-    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Product))
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Product))
+    return docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   },
 
   async create(data: Omit<Product, 'id' | 'createdAt'>): Promise<Product> {
-    const docRef = await addDoc(collection(db, 'products'), {
-      ...stripUndefined(data as any),
-      createdAt: serverTimestamp(),
-    })
+    const payload = { ...stripUndefined(data as any), createdAt: serverTimestamp() }
+    console.log('[Firestore] Creating product:', JSON.stringify(payload, null, 2))
+    const docRef = await addDoc(collection(db, 'products'), payload)
     return { ...data, id: docRef.id, createdAt: new Date().toISOString() } as Product
   },
 
   async update(id: string, data: Partial<Product>): Promise<void> {
+    if (!id || id === 'new') throw new Error(`Invalid product ID for update: "${id}"`)
+    console.log('[Firestore] Updating product id:', id)
     await updateDoc(doc(db, 'products', id), stripUndefined(data as any))
   },
 
@@ -76,8 +79,9 @@ export const productsService = {
 
 export const ordersService = {
   async getAll(): Promise<Order[]> {
-    const snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc')))
-    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Order))
+    const snap = await getDocs(collection(db, 'orders'))
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Order))
+    return docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   },
 
   async getById(id: string): Promise<Order | null> {
@@ -87,9 +91,10 @@ export const ordersService = {
   },
 
   async getByUserId(userId: string): Promise<Order[]> {
-    const q = query(collection(db, 'orders'), where('userId', '==', userId), orderBy('createdAt', 'desc'))
+    const q = query(collection(db, 'orders'), where('userId', '==', userId))
     const snap = await getDocs(q)
-    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Order))
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Order))
+    return docs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   },
 
   async create(data: Omit<Order, 'id' | 'createdAt'>): Promise<Order> {
@@ -154,8 +159,9 @@ export interface CosmosConfig {
 
 export const cosmosService = {
   async getAll(): Promise<CosmosConfig[]> {
-    const snap = await getDocs(query(collection(db, 'cosmosConfigs'), orderBy('createdAt', 'desc')))
-    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as CosmosConfig))
+    const snap = await getDocs(collection(db, 'cosmosConfigs'))
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as CosmosConfig))
+    return docs.sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
   },
 
   async getById(id: string): Promise<CosmosConfig | null> {

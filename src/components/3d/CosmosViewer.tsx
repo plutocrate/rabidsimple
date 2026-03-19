@@ -22,9 +22,19 @@ const LOCAL_COSMOS  = import.meta.env.VITE_COSMOS_LOCAL_URL as string | undefine
 const COSMOS_BASE   = LOCAL_COSMOS || 'https://ryanis.cool/cosmos/'
 const IS_LOCAL      = !!LOCAL_COSMOS
 
+// Convert full editor URL to viewer-only URL
+// /cosmos/beta#cm:... → /cosmos/viewer#cm:...
+function toViewerUrl(url: string): string {
+  return url
+    .replace('/cosmos/beta#', '/cosmos/embed#')
+    .replace('/cosmos/beta/', '/cosmos/embed/')
+    .replace('localhost:5174/cosmos/beta', 'ryanis.cool/cosmos/embed')
+}
+
 export function CosmosViewer({ url, editable = false, className, onUrlChange }: CosmosViewerProps) {
+  const displayUrl = (!editable && url) ? toViewerUrl(url) : (url || COSMOS_BASE)
   const [inputUrl, setInputUrl]   = useState(url || COSMOS_BASE)
-  const [activeUrl, setActiveUrl] = useState(url || COSMOS_BASE)
+  const [activeUrl, setActiveUrl] = useState(displayUrl)
   const [loading, setLoading]     = useState(true)
   const [localDown, setLocalDown] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
