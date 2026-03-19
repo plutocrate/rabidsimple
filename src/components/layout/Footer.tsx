@@ -9,7 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <p className="font-heading text-5xl tracking-wider mb-4">RABID</p>
-            <p className="font-sans text-base text-white/50 leading-relaxed">
+            <p className="font-mono text-[10px] tracking-widest uppercase text-white/30 mb-2">Est. 2026 · India</p>
+            <p className="font-display text-lg italic text-white/55 leading-relaxed">
               Handwired split keyboards. Built obsessively in India.
             </p>
           </div>

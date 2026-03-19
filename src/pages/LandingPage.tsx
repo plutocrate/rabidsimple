@@ -32,7 +32,7 @@ export function LandingPage() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="mb-8"
           >
-            <p className="font-mono text-xs tracking-[0.3em] text-white/40 uppercase mb-4">Est. 2024 · India</p>
+            <p className="font-mono text-xs tracking-[0.3em] text-white/40 uppercase mb-4">Est. 2026 · India</p>
             <h1 className="font-heading text-[clamp(4rem,18vw,7rem)] leading-[0.85] tracking-wider text-white mb-5">
               {heroTitle}
             </h1>
