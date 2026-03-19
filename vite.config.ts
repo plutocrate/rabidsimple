@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// VITE_COSMOS_LOCAL_URL is set by scripts/setup-cosmos.sh
 export default defineConfig({
   plugins: [react()],
   resolve: {

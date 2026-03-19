@@ -28,7 +28,7 @@ function uid() { return Math.random().toString(36).slice(2) + Date.now().toStrin
 const EMPTY: Omit<Product, 'id' | 'createdAt'> = {
   slug: '', name: '', subtitle: '', description: '', longDescription: '',
   category: 'keyboard', basePrice: 0, images: [], tags: [], variants: [],
-  specs: {}, inStock: true, featured: false,
+  specs: {}, inStock: true, featured: false, stockCount: undefined,
 }
 
 const TAG_CATEGORIES = ['size', 'layout', 'connectivity', 'switch', 'custom'] as const
@@ -530,6 +530,15 @@ export function ProductEditor() {
                 <span className="font-mono text-xs tracking-widest uppercase text-white/50">Featured (homepage)</span>
               </label>
             </div>
+            <Field label="Stock Count" hint="Leave empty for unlimited. Set to 1 for last unit — cart will prevent adding more.">
+              <Input
+                type="number"
+                min={1}
+                placeholder="Unlimited"
+                value={(product as any).stockCount ?? ''}
+                onChange={e => patch({ stockCount: e.target.value ? Number(e.target.value) : undefined } as any)}
+              />
+            </Field>
           </Section>
 
           {/* ── 2. DESCRIPTION ── */}
@@ -548,7 +557,7 @@ export function ProductEditor() {
 
           {/* ── 3. IMAGES ── */}
           <Section title="Images">
-            <p className="font-mono text-[11px] text-white/30">First image is the primary/thumbnail. Hover any image to reorder or remove.</p>
+            <p className="font-mono text-[11px] text-white/30">First image is the primary/thumbnail. Uploads go to: <span className="text-white/50">productMedia/{slug}/images/</span></p>
             <ImagesEditor images={product.images} slug={product.slug} onChange={imgs => patch({ images: imgs })} />
           </Section>
 
@@ -562,7 +571,7 @@ export function ProductEditor() {
                 {cosmosConfigs.map(cfg => <option key={cfg.id} value={cfg.id}>{cfg.name}</option>)}
               </select>
             </Field>
-            <Field label="Three.js Model Path" hint="Fallback if no Cosmos config set. Relative to /public, e.g. /assets/models/keyboard_model.json">
+            <Field label="Three.js Model Path" hint={`Fallback if no Cosmos config. Relative to /public. Convention: /productMedia/${product.slug || '<slug>'}/model.json`}>
               <Input value={product.modelPath ?? ''} onChange={e => patch({ modelPath: e.target.value })}
                 placeholder="/assets/models/keyboard_model.json" />
             </Field>

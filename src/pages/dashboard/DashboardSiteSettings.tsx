@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { siteSettingsService, cosmosService, defaultSiteSettings } from '@/lib/firestore'
+import { siteSettingsService, cosmosService, defaultSiteSettings, uploadHeroMedia } from '@/lib/firestore'
 import type { SiteSettings, CosmosConfig } from '@/lib/firestore'
-import { Save, Check } from 'lucide-react'
+import { Save, Check, Upload, Wifi, WifiOff } from 'lucide-react'
 
 export function DashboardSiteSettings() {
   const [settings, setSettings]           = useState<SiteSettings>(defaultSiteSettings)
@@ -53,6 +53,12 @@ export function DashboardSiteSettings() {
           <p className="font-mono text-[10px] tracking-widest uppercase text-white/25 mb-4 flex items-center gap-2">
             <span className="w-4 h-px bg-white/20 inline-block" /> Hero Section
           </p>
+          {import.meta.env.VITE_COSMOS_LOCAL_URL && (
+            <div className="flex items-center gap-2 mb-4 border border-green-500/20 bg-green-900/10 px-3 py-2">
+              <Wifi className="w-3 h-3 text-green-400/60 shrink-0" />
+              <p className="font-mono text-[10px] text-green-400/60">Local Cosmos running at {import.meta.env.VITE_COSMOS_LOCAL_URL}</p>
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <Label className="font-mono text-[9px] tracking-widest uppercase text-white/30">Hero Title</Label>

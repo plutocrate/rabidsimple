@@ -1,6 +1,8 @@
 /**
- * Firestore data layer — replaces the old Express/MongoDB backend.
- * All collections: products, orders, siteSettings, cosmosConfigs
+ * Firestore data layer — all collections: products, orders, siteSettings, cosmosConfigs
+ * Storage path convention:
+ *   - Product images: productMedia/<slug>/images/<timestamp>-<filename>
+ *   - Hero media:     heroMedia/<filename>
  */
 
 import {
@@ -8,7 +10,7 @@ import {
   query, where, orderBy, serverTimestamp, Timestamp
 } from 'firebase/firestore'
 import {
-  ref, uploadBytes, getDownloadURL, deleteObject
+  ref, uploadBytes, getDownloadURL, deleteObject, listAll
 } from 'firebase/storage'
 import { db, storage } from './firebase'
 import type { Product, Order } from '@/types'
@@ -84,6 +86,12 @@ export const ordersService = {
     return { id: snap.id, ...snap.data(), createdAt: toDate((snap.data() as any).createdAt) } as Order
   },
 
+  async getByUserId(userId: string): Promise<Order[]> {
+    const q = query(collection(db, 'orders'), where('userId', '==', userId), orderBy('createdAt', 'desc'))
+    const snap = await getDocs(q)
+    return snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: toDate((d.data() as any).createdAt) } as Order))
+  },
+
   async create(data: Omit<Order, 'id' | 'createdAt'>): Promise<Order> {
     const docRef = await addDoc(collection(db, 'orders'), {
       ...stripUndefined(data as any),
@@ -97,14 +105,14 @@ export const ordersService = {
   },
 }
 
-// ── Site Settings (hero content, page copy, etc.) ────────────────────────────
+// ── Site Settings ─────────────────────────────────────────────────────────────
 
 export interface SiteSettings {
   heroTitle: string
   heroSubtitle: string
   heroCtaLabel: string
   heroCtaHref: string
-  cosmosConfigId: string | null  // which Cosmos keyboard config is shown in hero
+  cosmosConfigId: string | null
   announcementBanner: string
   announcementEnabled: boolean
   footerTagline: string
@@ -133,15 +141,14 @@ export const siteSettingsService = {
   },
 }
 
-// ── Cosmos Keyboard Configs ───────────────────────────────────────────────────
-// Each config stores what gets passed to the Cosmos Keyboards iframe/embed
+// ── Cosmos Configs ────────────────────────────────────────────────────────────
 
 export interface CosmosConfig {
   id?: string
   name: string
   description: string
-  iframeUrl: string           // Full Cosmos share URL
-  productSlug: string | null  // Optional: link to a product
+  iframeUrl: string
+  productSlug: string | null
   createdAt?: string
 }
 
@@ -174,13 +181,43 @@ export const cosmosService = {
   },
 }
 
-// ── Storage helpers ───────────────────────────────────────────────────────────
+// ── Storage ───────────────────────────────────────────────────────────────────
+// Convention:
+//   Product images  → productMedia/<slug>/images/<timestamp>-<name>
+//   Hero media      → heroMedia/<name>
 
 export async function uploadProductImage(file: File, productSlug: string): Promise<string> {
-  const path = `products/${productSlug}/${Date.now()}-${file.name}`
+  const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+  const path = `productMedia/${productSlug}/images/${filename}`
   const storageRef = ref(storage, path)
   await uploadBytes(storageRef, file)
   return getDownloadURL(storageRef)
+}
+
+export async function uploadProductModel(file: File, productSlug: string): Promise<string> {
+  const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+  const path = `productMedia/${productSlug}/models/${filename}`
+  const storageRef = ref(storage, path)
+  await uploadBytes(storageRef, file)
+  return getDownloadURL(storageRef)
+}
+
+export async function uploadHeroMedia(file: File): Promise<string> {
+  const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+  const path = `heroMedia/${filename}`
+  const storageRef = ref(storage, path)
+  await uploadBytes(storageRef, file)
+  return getDownloadURL(storageRef)
+}
+
+export async function listProductImages(productSlug: string): Promise<string[]> {
+  try {
+    const listRef = ref(storage, `productMedia/${productSlug}/images`)
+    const res = await listAll(listRef)
+    return Promise.all(res.items.map(item => getDownloadURL(item)))
+  } catch {
+    return []
+  }
 }
 
 export async function deleteStorageFile(url: string): Promise<void> {
@@ -188,6 +225,6 @@ export async function deleteStorageFile(url: string): Promise<void> {
     const storageRef = ref(storage, url)
     await deleteObject(storageRef)
   } catch {
-    // ignore not-found errors
+    // ignore not-found
   }
 }
