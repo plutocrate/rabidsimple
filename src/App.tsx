@@ -20,6 +20,7 @@ import { DashboardSiteSettings } from '@/pages/dashboard/DashboardSiteSettings'
 import { PrivacyPage }           from '@/pages/legal/PrivacyPage'
 import { TermsPage }             from '@/pages/legal/TermsPage'
 import { ReturnsPage }           from '@/pages/legal/ReturnsPage'
+import { ContactPage }           from '@/pages/ContactPage'
 
 // Unauthenticated users trying to reach /dashboard are sent to the hidden admin login.
 // Non-admin authenticated users are sent home.
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="/privacy"       element={<PrivacyPage />} />
         <Route path="/terms"         element={<TermsPage />} />
         <Route path="/returns"       element={<ReturnsPage />} />
+        <Route path="/contact"       element={<ContactPage />} />
 
         {/* Legacy shop URLs */}
         <Route path="/keyboards"        element={<Navigate to="/shop" replace />} />

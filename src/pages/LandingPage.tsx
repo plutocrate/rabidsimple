@@ -25,18 +25,17 @@ export function LandingPage() {
           <LandingViewer modelPath={MODEL_PATH} />
         </div>
 
-        {/* Content — remaining 35vh + overflow */}
-        <div className="flex flex-col justify-center px-7 sm:px-10 py-10 flex-1 bg-black">
+        {/* Content */}
+        <div className="flex flex-col justify-center px-7 sm:px-10 py-6 flex-1 bg-black">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            className="mb-6"
           >
-            <p className="font-mono text-xs tracking-[0.3em] text-white/40 uppercase mb-4">Est. 2026 · India</p>
-            <h1 className="font-heading text-[clamp(4rem,18vw,7rem)] leading-[0.85] tracking-wider text-white mb-5">
+            <h1 className="font-heading text-[clamp(3.5rem,18vw,7rem)] leading-[0.85] tracking-wider text-white mb-4">
               {heroTitle}
             </h1>
-            <p className="font-display text-xl italic text-white/55 leading-relaxed max-w-sm">
+            <p className="font-display text-lg italic text-white/55 leading-relaxed max-w-sm">
               {heroSubtitle}
             </p>
           </motion.div>
@@ -44,15 +43,15 @@ export function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-row gap-3"
           >
             <Link to="/shop">
-              <Button size="lg" className="text-base px-8 h-14 gap-3 font-bold">
-                Shop Now <ArrowRight className="w-5 h-5" />
+              <Button size="lg" className="text-sm px-5 h-12 gap-2 font-bold">
+                Shop Now <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
             <Link to="/services">
-              <Button variant="outline" size="lg" className="text-base px-8 h-14 font-bold">
+              <Button variant="outline" size="lg" className="text-sm px-5 h-12 font-bold">
                 Services
               </Button>
             </Link>
@@ -74,7 +73,6 @@ export function LandingPage() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="mb-10"
           >
-            <p className="font-mono text-sm tracking-[0.3em] text-white/45 uppercase mb-5">Est. 2026 · India</p>
             <h1 className="font-heading text-[clamp(5rem,12vw,9rem)] leading-[0.85] tracking-wider text-white mb-6">
               {heroTitle}
             </h1>

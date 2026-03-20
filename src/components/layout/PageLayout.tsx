@@ -1,30 +1,86 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { CartDrawer } from './CartDrawer'
 import { useSiteSettings } from '@/store/useSiteSettings'
-import { X } from 'lucide-react'
 
 interface PageLayoutProps {
   children: React.ReactNode
   hideFooter?: boolean
 }
 
-// Navbar is fixed at 72px height. Banner (~40px) sits right below it.
 const NAVBAR_H = 72
-const BANNER_H = 40
+
+// ── Same palette as LandingViewer ──────────────────────────────────────────
+const PALETTE_CASES = [
+  '#e2ddd8', '#141414', '#f2ece0', '#ccd4dc',
+  '#1e3a5f', '#5c1a1a', '#1a3a1e', '#3a3e44',
+  '#6b4226', '#080808',
+]
+
+function hexToRgb(hex: string): [number, number, number] {
+  return [
+    parseInt(hex.slice(1, 3), 16) / 255,
+    parseInt(hex.slice(3, 5), 16) / 255,
+    parseInt(hex.slice(5, 7), 16) / 255,
+  ]
+}
+
+function lerpHex(a: string, b: string, t: number): string {
+  const [ar, ag, ab] = hexToRgb(a)
+  const [br, bg, bb] = hexToRgb(b)
+  const r = Math.round((ar + (br - ar) * t) * 255)
+  const g = Math.round((ag + (bg - ag) * t) * 255)
+  const bl = Math.round((ab + (bb - ab) * t) * 255)
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${bl.toString(16).padStart(2, '0')}`
+}
+
+function easeInOut(t: number) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+}
+
+function useLerpColor() {
+  const [color, setColor] = useState(PALETTE_CASES[0])
+  const activeRef = useRef(0)
+  const tRef = useRef(0)
+  const fromRef = useRef(PALETTE_CASES[0])
+  const toRef = useRef(PALETTE_CASES[1])
+
+  useEffect(() => {
+    let raf: number
+    let last = performance.now()
+    function tick(now: number) {
+      const dt = (now - last) / 1000
+      last = now
+      tRef.current = Math.min(tRef.current + dt * 0.32, 1)
+      setColor(lerpHex(fromRef.current, toRef.current, easeInOut(tRef.current)))
+      if (tRef.current >= 1) {
+        const next = (activeRef.current + 1) % PALETTE_CASES.length
+        fromRef.current = toRef.current
+        toRef.current = PALETTE_CASES[(next + 1) % PALETTE_CASES.length]
+        tRef.current = 0
+        activeRef.current = next
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  return color
+}
 
 export function PageLayout({ children, hideFooter }: PageLayoutProps) {
   const { pathname } = useLocation()
   const { settings, fetch, loaded, bannerDismissed, dismissBanner } = useSiteSettings()
+  const accentColor = useLerpColor()
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [pathname])
 
-  // Always re-fetch on mount so fresh Firestore data is reflected
   useEffect(() => {
     fetch()
   }, [])
@@ -39,7 +95,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
     <div className="min-h-screen flex flex-col bg-background grain">
       <Navbar />
 
-      {/* Banner — fixed, sits directly below the fixed navbar */}
+      {/* Banner — fixed overlay, does NOT push content down */}
       <div className="fixed left-0 right-0 z-40" style={{ top: NAVBAR_H }}>
         <AnimatePresence>
           {showBanner && (
@@ -50,47 +106,38 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="overflow-hidden"
             >
-              <div className="
-                border-b border-white/8
-                bg-[#0e0e0e]
-                flex items-center justify-between
-                px-6 sm:px-10
-                py-2.5
-              ">
-                {/* Left accent */}
-                <div className="w-px h-3 bg-white/20 shrink-0 mr-4 hidden sm:block" />
-
-                {/* Text */}
-                <p className="flex-1 font-mono text-[11px] tracking-[0.18em] uppercase text-white/55 text-center leading-relaxed">
+              <button
+                onClick={() => dismissBanner()}
+                className="w-full bg-[#0a0a0a] hover:bg-white/[0.03] transition-colors flex items-center justify-center px-4 py-2 cursor-pointer"
+                style={{
+                  borderTop: `1px solid ${accentColor}66`,
+                  borderBottom: `1px solid ${accentColor}66`,
+                }}
+                aria-label="Dismiss banner"
+              >
+                {/* Lerping left accent line */}
+                <span
+                  className="hidden sm:block w-px h-3 shrink-0 mr-4 transition-colors duration-1000"
+                  style={{ backgroundColor: `${accentColor}99` }}
+                />
+                <p className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/50 text-center leading-relaxed">
                   {settings.announcementBanner}
                 </p>
-
-                {/* Dismiss */}
-                <button
-                  onClick={() => dismissBanner()}
-                  className="ml-4 shrink-0 w-5 h-5 flex items-center justify-center text-white/20 hover:text-white/60 transition-colors"
-                  aria-label="Dismiss banner"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
+                <span
+                  className="hidden sm:block w-px h-3 shrink-0 ml-4 transition-colors duration-1000"
+                  style={{ backgroundColor: `${accentColor}99` }}
+                />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/*
-        Push page content below navbar + optional banner.
-        Animate padding-top so page content slides down smoothly when banner appears.
-      */}
-      <motion.div
-        className="flex flex-col flex-1"
-        animate={{ paddingTop: showBanner ? NAVBAR_H + BANNER_H : NAVBAR_H }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      >
+      {/* Fixed top padding — just navbar height, banner overlays content */}
+      <div className="flex flex-col flex-1" style={{ paddingTop: NAVBAR_H }}>
         <main className="flex-1">{children}</main>
         {!hideFooter && <Footer />}
-      </motion.div>
+      </div>
 
       <CartDrawer />
     </div>
