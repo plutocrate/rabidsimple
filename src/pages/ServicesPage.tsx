@@ -70,7 +70,7 @@ export function ServicesPage() {
 
   return (
     <PageLayout>
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-28 pb-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-8 pb-16">
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-14 sm:mb-20">

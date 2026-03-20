@@ -135,7 +135,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
 
       {/* Fixed top padding — just navbar height, banner overlays content */}
       <div className="flex flex-col flex-1" style={{ paddingTop: NAVBAR_H }}>
-        <main className="flex-1">{children}</main>
+        <main>{children}</main>
         {!hideFooter && <Footer />}
       </div>
 
