@@ -19,23 +19,23 @@ export function LandingPage() {
   return (
     <PageLayout>
       {/* ── Mobile / Tablet layout: canvas on top, content below ── */}
-      <section className="flex flex-col lg:hidden min-h-screen bg-[#080808]">
-        {/* 3D canvas — 40vh on mobile, 50vh on tablet */}
-        <div className="w-full flex-shrink-0 h-[40vh] md:h-[50vh]">
+      <section className="flex flex-col lg:hidden bg-[#080808]">
+        {/* 3D canvas — 35vh on mobile, 45vh on tablet */}
+        <div className="w-full flex-shrink-0 h-[35vh] md:h-[45vh]">
           <LandingViewer modelPath={MODEL_PATH} />
         </div>
 
         {/* Content */}
-        <div className="flex flex-col justify-center px-7 sm:px-10 py-6 flex-1 bg-black">
+        <div className="flex flex-col px-7 sm:px-10 pt-6 pb-10 bg-black">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-6"
+            className="mb-4"
           >
-            <h1 className="font-heading text-[clamp(3.5rem,18vw,7rem)] leading-[0.85] tracking-wider text-white mb-4">
+            <h1 className="font-heading text-[clamp(3rem,16vw,6rem)] leading-[0.85] tracking-wider text-white mb-3">
               {heroTitle}
             </h1>
-            <p className="font-display text-lg italic text-white/55 leading-relaxed max-w-sm">
+            <p className="font-display text-base italic text-white/55 leading-relaxed max-w-sm">
               {heroSubtitle}
             </p>
           </motion.div>
@@ -46,12 +46,12 @@ export function LandingPage() {
             className="flex flex-row gap-3"
           >
             <Link to="/shop">
-              <Button size="lg" className="text-sm px-5 h-12 gap-2 font-bold">
+              <Button size="lg" className="text-sm px-5 h-11 gap-2 font-bold">
                 Shop Now <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
             <Link to="/services">
-              <Button variant="outline" size="lg" className="text-sm px-5 h-12 font-bold">
+              <Button variant="outline" size="lg" className="text-sm px-5 h-11 font-bold">
                 Services
               </Button>
             </Link>
