@@ -14,7 +14,7 @@ export function LandingPage() {
   useEffect(() => { fetch() }, [])
   const MODEL_PATH = settings.heroModelPath || DEFAULT_MODEL
   const heroTitle    = settings.heroTitle    || 'RABID'
-  const heroSubtitle = settings.heroSubtitle || 'Premium split keyboards for those who refuse to compromise on how they work.'
+  const heroSubtitle = settings.heroSubtitle || 'Premium split keyboards for men.'
 
   return (
     <PageLayout>
