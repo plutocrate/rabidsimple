@@ -128,7 +128,7 @@ export interface SiteSettings {
 
 export const defaultSiteSettings: SiteSettings = {
   heroTitle: 'RABID',
-  heroSubtitle: 'Premium split keyboards for men.',
+  heroSubtitle: 'Premium split keyboards for those who refuse to compromise.',
   heroCtaLabel: 'Shop Keyboards',
   heroCtaHref: '/shop',
   cosmosConfigId: null,
