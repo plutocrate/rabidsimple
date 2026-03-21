@@ -54,6 +54,43 @@ export function MailingListPopup() {
   const rotateX = useTransform(my, [-0.5, 0.5], [3, -3])
   const rotateY = useTransform(mx, [-0.5, 0.5], [-3, 3])
 
+  // Gyroscope tilt for mobile — fully guarded, never crashes
+  useEffect(() => {
+    try {
+      const isMobile = window.matchMedia('(pointer: coarse)').matches
+      if (!isMobile) return
+
+      let baseGamma: number | null = null
+      let baseBeta: number | null = null
+
+      function handleOrientation(e: DeviceOrientationEvent) {
+        try {
+          if (e.gamma === null || e.beta === null) return
+          if (baseGamma === null) { baseGamma = e.gamma; baseBeta = e.beta; return }
+          const dGamma = Math.max(-25, Math.min(25, e.gamma - baseGamma!))
+          const dBeta  = Math.max(-25, Math.min(25, e.beta  - baseBeta!))
+          mx.set(dGamma / 25 * 0.5)
+          my.set(dBeta  / 25 * 0.5)
+        } catch { /* ignore */ }
+      }
+
+      try {
+        const req = (DeviceOrientationEvent as any).requestPermission
+        if (typeof req === 'function') {
+          req().then((state: string) => {
+            if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation)
+          }).catch(() => {})
+        } else {
+          window.addEventListener('deviceorientation', handleOrientation)
+        }
+      } catch { /* ignore */ }
+
+      return () => {
+        try { window.removeEventListener('deviceorientation', handleOrientation) } catch { /* ignore */ }
+      }
+    } catch { /* ignore */ }
+  }, [])
+
   // Colors derived from theme
   const fg      = isLight ? 'rgba(20,16,12,1)'    : 'rgba(255,255,255,1)'
   const fg60    = isLight ? 'rgba(20,16,12,0.60)' : 'rgba(255,255,255,0.60)'
