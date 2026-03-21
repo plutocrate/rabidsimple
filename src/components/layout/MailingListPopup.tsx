@@ -62,10 +62,17 @@ export function MailingListPopup() {
       let baseBeta:  number | null = null
       function onOrientation(e: DeviceOrientationEvent) {
         try {
-          if (e.gamma == null || e.beta == null) return
+          if (e.gamma == null || e.beta == null || e.alpha == null) return
           if (baseGamma == null) { baseGamma = e.gamma; baseBeta = e.beta; return }
-          mx.set(Math.max(-1, Math.min(1, (e.gamma - baseGamma) / 45)))
-          my.set(Math.max(-1, Math.min(1, (e.beta  - baseBeta!) / 45)))
+          // gamma: left/right tilt (-90 to 90) → rotateY
+          // beta: forward/back tilt (-180 to 180) → rotateX
+          const dGamma = e.gamma - baseGamma
+          const dBeta  = e.beta  - baseBeta!
+          // Wrap around edges (e.g. gamma flipping from -90 to 90)
+          const wrapGamma = dGamma > 90 ? dGamma - 180 : dGamma < -90 ? dGamma + 180 : dGamma
+          const wrapBeta  = dBeta  > 90 ? dBeta  - 180 : dBeta  < -90 ? dBeta  + 180 : dBeta
+          mx.set(Math.max(-1, Math.min(1, wrapGamma / 30)))
+          my.set(Math.max(-1, Math.min(1, wrapBeta  / 30)))
         } catch { /**/ }
       }
       const req = (DeviceOrientationEvent as any).requestPermission
