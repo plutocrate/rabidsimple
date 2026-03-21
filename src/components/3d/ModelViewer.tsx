@@ -95,8 +95,23 @@ function useAutoLerp() {
   return colors
 }
 
+function useCanvasBg() {
+  const [bg, setBg] = useState(() =>
+    localStorage.getItem('theme') !== 'dark' ? '#f5f2ee' : '#060606'
+  )
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setBg(localStorage.getItem('theme') !== 'dark' ? '#f5f2ee' : '#060606')
+    })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
+  return bg
+}
+
 export function ModelViewer({ modelPath, className }: ModelViewerProps) {
   const colors = useAutoLerp()
+  const canvasBg = useCanvasBg()
 
   return (
     <div className={className ?? 'w-full h-full'}>
@@ -108,9 +123,9 @@ export function ModelViewer({ modelPath, className }: ModelViewerProps) {
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.4,
         }}
-        style={{ background: '#060606' }}
+        style={{ background: canvasBg }}
       >
-        <color attach="background" args={['#060606']} />
+        <color attach="background" args={[canvasBg]} />
         <Suspense fallback={null}>
           <ambientLight intensity={0.12} />
           <directionalLight position={[2, 8, 3]} intensity={3.2} castShadow color="#fffaf0"

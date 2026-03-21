@@ -128,7 +128,7 @@ export interface SiteSettings {
 
 export const defaultSiteSettings: SiteSettings = {
   heroTitle: 'RABID',
-  heroSubtitle: 'Premium split keyboards for those who refuse to compromise.',
+  heroSubtitle: 'Premium split keyboards for men.',
   heroCtaLabel: 'Shop Keyboards',
   heroCtaHref: '/shop',
   cosmosConfigId: null,
@@ -239,4 +239,20 @@ export async function deleteStorageFile(url: string): Promise<void> {
   } catch {
     // ignore not-found
   }
+}
+
+// ── Mailing List ──────────────────────────────────────────────────────────────
+
+export const mailingListService = {
+  async subscribe(email: string): Promise<{ duplicate: boolean }> {
+    const q = query(collection(db, 'mailingList'), where('email', '==', email.toLowerCase().trim()))
+    const snap = await getDocs(q)
+    if (!snap.empty) return { duplicate: true }
+    await addDoc(collection(db, 'mailingList'), {
+      email: email.toLowerCase().trim(),
+      subscribedAt: new Date().toISOString(),
+      source: 'popup',
+    })
+    return { duplicate: false }
+  },
 }

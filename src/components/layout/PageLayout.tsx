@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { CartDrawer } from './CartDrawer'
+import { MailingListPopup } from './MailingListPopup'
 import { useSiteSettings } from '@/store/useSiteSettings'
 
 interface PageLayoutProps {
@@ -108,7 +109,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
             >
               <button
                 onClick={() => dismissBanner()}
-                className="w-full bg-[#0a0a0a] hover:bg-white/[0.03] transition-colors flex items-center justify-center px-4 py-2 cursor-pointer"
+                className="w-full bg-background hover:bg-white/[0.03] transition-colors flex items-center justify-center px-4 py-2 cursor-pointer"
                 style={{
                   borderTop: `1px solid ${accentColor}66`,
                   borderBottom: `1px solid ${accentColor}66`,
@@ -120,7 +121,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
                   className="hidden sm:block w-px h-3 shrink-0 mr-4 transition-colors duration-1000"
                   style={{ backgroundColor: `${accentColor}99` }}
                 />
-                <p className="font-mono text-[11px] tracking-[0.18em] uppercase text-white/50 text-center leading-relaxed">
+                <p className="font-mono text-[11px] tracking-[0.18em] uppercase text-foreground/55 text-center leading-relaxed">
                   {settings.announcementBanner}
                 </p>
                 <span
@@ -140,6 +141,7 @@ export function PageLayout({ children, hideFooter }: PageLayoutProps) {
       </div>
 
       <CartDrawer />
+      <MailingListPopup />
     </div>
   )
 }

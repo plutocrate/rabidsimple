@@ -72,61 +72,76 @@ function VariantPicker({ variant, selected, onSelect }: {
 
 function ImageSlideshow({ images }: { images: string[] }) {
   const [idx, setIdx] = useState(0)
-  const [dir, setDir] = useState(1)
+  const [dragging, setDragging] = useState(false)
+  const [dragStart, setDragStart] = useState(0)
+  const [dragOffset, setDragOffset] = useState(0)
+  const THRESHOLD = 50
 
-  function go(next: number) {
-    setDir(next > idx ? 1 : -1)
-    setIdx(next)
+  function prev() { setIdx(i => (i - 1 + images.length) % images.length) }
+  function next() { setIdx(i => (i + 1) % images.length) }
+
+  function onDragStart(clientX: number) {
+    setDragging(true)
+    setDragStart(clientX)
+    setDragOffset(0)
+  }
+  function onDragMove(clientX: number) {
+    if (!dragging) return
+    setDragOffset(clientX - dragStart)
+  }
+  function onDragEnd() {
+    if (!dragging) return
+    setDragging(false)
+    if (dragOffset < -THRESHOLD && images.length > 1) next()
+    else if (dragOffset > THRESHOLD && images.length > 1) prev()
+    setDragOffset(0)
   }
 
   if (images.length === 0) return (
-    <div className="w-full h-full flex items-center justify-center bg-[#0a0a0a]">
-      <p className="font-mono text-xs tracking-widest uppercase text-white/20">No images</p>
+    <div className="w-full h-full flex items-center justify-center bg-card">
+      <p className="font-mono text-xs tracking-widest uppercase text-foreground/20">No images</p>
     </div>
   )
 
   return (
-    <div className="relative w-full h-full bg-[#0a0a0a] overflow-hidden group">
-      <AnimatePresence initial={false} custom={dir}>
+    <div
+      className="relative w-full h-full overflow-hidden select-none cursor-grab active:cursor-grabbing"
+      onMouseDown={e => onDragStart(e.clientX)}
+      onMouseMove={e => onDragMove(e.clientX)}
+      onMouseUp={onDragEnd}
+      onMouseLeave={onDragEnd}
+      onTouchStart={e => onDragStart(e.touches[0].clientX)}
+      onTouchMove={e => { e.preventDefault(); onDragMove(e.touches[0].clientX) }}
+      onTouchEnd={onDragEnd}
+      style={{ touchAction: 'pan-y' }}
+    >
+      <AnimatePresence initial={false} mode="popLayout">
         <motion.img
           key={idx}
           src={images[idx]}
           alt={`Product image ${idx + 1}`}
-          custom={dir}
-          variants={{
-            enter: (d: number) => ({ x: d * 60, opacity: 0 }),
-            center: { x: 0, opacity: 1 },
-            exit:  (d: number) => ({ x: d * -60, opacity: 0 }),
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="absolute inset-0 w-full h-full object-contain"
+          initial={{ x: dragOffset < 0 ? 80 : -80, opacity: 0 }}
+          animate={{ x: dragging ? dragOffset * 0.3 : 0, opacity: dragging ? 0.85 : 1 }}
+          exit={{ x: dragOffset < 0 ? -80 : 80, opacity: 0 }}
+          transition={{ duration: 0.28, ease: 'easeInOut' }}
+          className="absolute inset-0 w-full h-full object-cover"
+          draggable={false}
         />
       </AnimatePresence>
 
       {images.length > 1 && (
-        <>
-          <button onClick={() => go((idx - 1 + images.length) % images.length)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/50 border border-white/10 text-white/50 hover:text-white hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100">
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button onClick={() => go((idx + 1) % images.length)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/50 border border-white/10 text-white/50 hover:text-white hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100">
-            <ChevronRight className="w-4 h-4" />
-          </button>
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
-              <button key={i} onClick={() => go(i)}
-                className={cn('w-1.5 h-1.5 rounded-full transition-all',
-                  i === idx ? 'bg-white' : 'bg-white/30 hover:bg-white/60')} />
-            ))}
-          </div>
-          <p className="absolute top-3 right-3 font-mono text-[9px] tracking-widest text-white/30">
-            {idx + 1} / {images.length}
-          </p>
-        </>
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={e => { e.stopPropagation(); setIdx(i) }}
+              className={cn(
+                'w-1.5 h-1.5 rounded-full transition-all duration-300',
+                i === idx ? 'bg-foreground w-4' : 'bg-foreground/25 hover:bg-foreground/50'
+              )}
+            />
+          ))}
+        </div>
       )}
     </div>
   )
@@ -231,7 +246,7 @@ export function ProductPage() {
 
           {/* Sticky viewer — top */}
           {hasViewer && (
-            <div className="sticky top-[72px] z-30 bg-[#0a0a0a]" style={{ height: '42vw', minHeight: 200, maxHeight: 320 }}>
+            <div className="sticky top-[72px] z-30 bg-[#0a0a0a]" style={{ height: '62vw', minHeight: 260, maxHeight: 420 }}>
               {showToggle && (
                 <div className="absolute top-2 right-2 z-10 flex gap-1">
                   <button onClick={() => setViewMode('3d')}

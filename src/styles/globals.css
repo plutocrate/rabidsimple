@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* ── Dark theme (default) ── */
     --background: 0 0% 3%;
     --foreground: 0 0% 97%;
     --card: 0 0% 6%;
@@ -25,6 +26,29 @@
     --ring: 0 0% 80%;
     --radius: 0.25rem;
   }
+
+  /* ── Light theme ── */
+  html.light {
+    --background: 40 12% 96%;
+    --foreground: 30 8% 10%;
+    --card: 40 10% 93%;
+    --card-foreground: 30 8% 10%;
+    --popover: 40 10% 93%;
+    --popover-foreground: 30 8% 10%;
+    --primary: 30 8% 10%;
+    --primary-foreground: 40 12% 96%;
+    --secondary: 35 8% 88%;
+    --secondary-foreground: 30 8% 20%;
+    --muted: 35 8% 88%;
+    --muted-foreground: 30 6% 45%;
+    --accent: 35 8% 84%;
+    --accent-foreground: 30 8% 10%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 8% 78%;
+    --input: 35 8% 90%;
+    --ring: 30 8% 30%;
+  }
 }
 
 @layer base {
@@ -44,17 +68,102 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
     background-color: rgba(255,255,255,0.2);
-    color: #fff;
+    color: inherit;
   }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #080808; }
-  ::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: #666; }
+  /* Dark scrollbar */
+  :root ::-webkit-scrollbar { width: 4px; }
+  :root ::-webkit-scrollbar-track { background: #080808; }
+  :root ::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+  :root ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+  /* Light scrollbar */
+  html.light ::-webkit-scrollbar-track { background: hsl(40 12% 92%); }
+  html.light ::-webkit-scrollbar-thumb { background: hsl(35 8% 65%); border-radius: 2px; }
+  html.light ::-webkit-scrollbar-thumb:hover { background: hsl(35 8% 45%); }
+
+  /* Light theme overrides for hardcoded dark colors */
+  html.light .bg-black { background-color: hsl(40 12% 96%) !important; }
+  html.light .bg-\[\#080808\] { background-color: hsl(40 10% 93%) !important; }
+  html.light .bg-\[\#070707\] { background-color: hsl(40 10% 94%) !important; }
+  html.light .bg-\[\#060606\] { background-color: hsl(40 10% 94%) !important; }
+  html.light .bg-\[\#050505\] { background-color: hsl(40 10% 93%) !important; }
+  html.light .bg-\[\#0a0a0a\] { background-color: hsl(40 10% 93%) !important; }
+  html.light .bg-\[\#0e0e0e\] { background-color: hsl(40 10% 93%) !important; }
+  html.light .text-white { color: hsl(30 8% 10%) !important; }
+  html.light .text-white\/70 { color: hsl(30 8% 10% / 0.70) !important; }
+  html.light .text-white\/65 { color: hsl(30 8% 10% / 0.65) !important; }
+  html.light .text-white\/55 { color: hsl(30 8% 10% / 0.55) !important; }
+  html.light .text-white\/50 { color: hsl(30 8% 10% / 0.50) !important; }
+  html.light .text-white\/45 { color: hsl(30 8% 10% / 0.45) !important; }
+  html.light .text-white\/40 { color: hsl(30 8% 10% / 0.40) !important; }
+  html.light .text-white\/35 { color: hsl(30 8% 10% / 0.35) !important; }
+  html.light .text-white\/30 { color: hsl(30 8% 10% / 0.30) !important; }
+  html.light .text-white\/28 { color: hsl(30 8% 10% / 0.28) !important; }
+  html.light .text-white\/25 { color: hsl(30 8% 10% / 0.25) !important; }
+  html.light .text-white\/22 { color: hsl(30 8% 10% / 0.22) !important; }
+  html.light .text-white\/20 { color: hsl(30 8% 10% / 0.20) !important; }
+  html.light .text-white\/18 { color: hsl(30 8% 10% / 0.18) !important; }
+  html.light .text-white\/12 { color: hsl(30 8% 10% / 0.12) !important; }
+  html.light .border-white\/10 { border-color: hsl(30 8% 10% / 0.12) !important; }
+  html.light .border-white\/12 { border-color: hsl(30 8% 10% / 0.12) !important; }
+  html.light .border-white\/15 { border-color: hsl(30 8% 10% / 0.15) !important; }
+  html.light .border-white\/18 { border-color: hsl(30 8% 10% / 0.18) !important; }
+  html.light .border-white\/20 { border-color: hsl(30 8% 10% / 0.20) !important; }
+  html.light .border-white\/25 { border-color: hsl(30 8% 10% / 0.25) !important; }
+  html.light .border-white\/6 { border-color: hsl(30 8% 10% / 0.06) !important; }
+  html.light .border-white\/8 { border-color: hsl(30 8% 10% / 0.08) !important; }
+  html.light .bg-white\/\[0\.03\] { background-color: hsl(30 8% 10% / 0.03) !important; }
+  html.light .bg-white\/\[0\.04\] { background-color: hsl(30 8% 10% / 0.04) !important; }
+  html.light .bg-white\/4 { background-color: hsl(30 8% 10% / 0.04) !important; }
+  html.light .bg-white\/5 { background-color: hsl(30 8% 10% / 0.05) !important; }
+  html.light .bg-white\/6 { background-color: hsl(30 8% 10% / 0.06) !important; }
+  html.light .bg-white\/8 { background-color: hsl(30 8% 10% / 0.08) !important; }
+  html.light .bg-white\/10 { background-color: hsl(30 8% 10% / 0.10) !important; }
+  html.light .bg-white\/\[0\.95\] { background-color: hsl(40 12% 96% / 0.95) !important; }
+  html.light .bg-black\/95 { background-color: hsl(40 12% 96% / 0.95) !important; }
+  html.light .bg-black\/75 { background-color: hsl(30 8% 10% / 0.25) !important; }
+  html.light .bg-black\/65 { background-color: hsl(30 8% 10% / 0.20) !important; }
+  html.light .bg-black\/60 { background-color: hsl(30 8% 10% / 0.20) !important; }
+  html.light .bg-black\/55 { background-color: hsl(30 8% 10% / 0.18) !important; }
+  html.light .bg-black\/50 { background-color: hsl(30 8% 10% / 0.15) !important; }
+  /* Exclude dark-locked elements (e.g. popup) from light theme overrides */
+  html.light [data-theme="dark"] .text-white { color: rgba(255,255,255,1) !important; }
+  html.light [data-theme="dark"] .text-white\/70 { color: rgba(255,255,255,0.70) !important; }
+  html.light [data-theme="dark"] .text-white\/65 { color: rgba(255,255,255,0.65) !important; }
+  html.light [data-theme="dark"] .text-white\/60 { color: rgba(255,255,255,0.60) !important; }
+  html.light [data-theme="dark"] .text-white\/55 { color: rgba(255,255,255,0.55) !important; }
+  html.light [data-theme="dark"] .text-white\/50 { color: rgba(255,255,255,0.50) !important; }
+  html.light [data-theme="dark"] .text-white\/45 { color: rgba(255,255,255,0.45) !important; }
+  html.light [data-theme="dark"] .text-white\/40 { color: rgba(255,255,255,0.40) !important; }
+  html.light [data-theme="dark"] .text-white\/35 { color: rgba(255,255,255,0.35) !important; }
+  html.light [data-theme="dark"] .text-white\/30 { color: rgba(255,255,255,0.30) !important; }
+  html.light [data-theme="dark"] .text-white\/25 { color: rgba(255,255,255,0.25) !important; }
+  html.light [data-theme="dark"] .text-white\/20 { color: rgba(255,255,255,0.20) !important; }
+  html.light [data-theme="dark"] .text-white\/18 { color: rgba(255,255,255,0.18) !important; }
+  html.light [data-theme="dark"] .text-white\/12 { color: rgba(255,255,255,0.12) !important; }
+  html.light [data-theme="dark"] .bg-black { background-color: #000 !important; }
+  html.light [data-theme="dark"] .bg-black\/95 { background-color: rgba(0,0,0,0.95) !important; }
+  html.light [data-theme="dark"] .bg-black\/60 { background-color: rgba(0,0,0,0.60) !important; }
+  html.light [data-theme="dark"] .bg-\[\#080808\] { background-color: #080808 !important; }
+  html.light [data-theme="dark"] .bg-\[\#070707\] { background-color: #070707 !important; }
+  html.light [data-theme="dark"] .bg-\[\#060606\] { background-color: #060606 !important; }
+  html.light [data-theme="dark"] .bg-\[\#050505\] { background-color: #050505 !important; }
+  html.light [data-theme="dark"] .bg-\[\#0a0a0a\] { background-color: #0a0a0a !important; }
+  html.light [data-theme="dark"] .bg-white\/8 { background-color: rgba(255,255,255,0.08) !important; }
+  html.light [data-theme="dark"] .bg-white\/10 { background-color: rgba(255,255,255,0.10) !important; }
+  html.light [data-theme="dark"] .bg-white { background-color: #fff !important; }
+  html.light [data-theme="dark"] .text-black { color: #000 !important; }
+  html.light [data-theme="dark"] .border-white\/10 { border-color: rgba(255,255,255,0.10) !important; }
+  html.light [data-theme="dark"] .border-white\/12 { border-color: rgba(255,255,255,0.12) !important; }
+  html.light [data-theme="dark"] .border-white\/15 { border-color: rgba(255,255,255,0.15) !important; }
+  html.light [data-theme="dark"] .border-white\/20 { border-color: rgba(255,255,255,0.20) !important; }
+  html.light [data-theme="dark"] .border-white\/8 { border-color: rgba(255,255,255,0.08) !important; }
 }
 
 @layer utilities {
@@ -88,8 +197,10 @@
   .scrollbar-none::-webkit-scrollbar { display: none; }
 }
 
-/* ── Ensure all mono labels are readable ── */
 .font-mono {
   font-size: max(0.75rem, 13px);
   line-height: 1.5;
 }
+  /* Cart drawer text on buttons */
+  html.light .bg-white { background-color: hsl(30 8% 10%) !important; }
+  html.light .text-black { color: hsl(40 12% 96%) !important; }

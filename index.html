@@ -9,6 +9,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <script>
+      // Apply theme before render to avoid flash — default is light
+      ;(function() {
+        var theme = localStorage.getItem('theme')
+        if (!theme) { theme = 'light'; localStorage.setItem('theme', 'light') }
+        if (theme === 'light') document.documentElement.classList.add('light')
+      })()
+    </script>
     <style>
       /* Block render until fonts are ready — eliminates childish fallback flash */
       body { opacity: 0; transition: opacity 0.2s ease; }

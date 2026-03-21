@@ -1,15 +1,36 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingBag, Menu, X, LogOut } from 'lucide-react'
+import { ShoppingBag, Menu, X, LogOut, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/useCartStore'
 import { useAuthStore } from '@/store/useAuthStore'
+
+function useTheme() {
+  const [light, setLight] = useState(() => {
+    if (typeof window === 'undefined') return true
+    const stored = localStorage.getItem('theme')
+    return stored !== 'dark' // default light
+  })
+
+  useEffect(() => {
+    if (light) {
+      document.documentElement.classList.add('light')
+      localStorage.setItem('theme', 'light')
+    } else {
+      document.documentElement.classList.remove('light')
+      localStorage.setItem('theme', 'dark')
+    }
+  }, [light])
+
+  return { light, toggle: () => setLight(v => !v) }
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { itemCount, toggleCart } = useCartStore()
   const { isAuthenticated, isAdmin, logout, user } = useAuthStore()
+  const { light, toggle } = useTheme()
   const location = useLocation()
   const count = itemCount()
 
@@ -88,6 +109,16 @@ export function Navbar() {
                 Sign In
               </Link>
             )}
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggle}
+              className="hidden md:flex w-8 h-8 items-center justify-center text-white/40 hover:text-white transition-colors"
+              aria-label="Toggle theme"
+            >
+              {light ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
+
             <button onClick={toggleCart} className="relative flex items-center justify-center w-10 h-10 text-white/65 hover:text-white transition-colors">
               <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
               {count > 0 && (
@@ -103,7 +134,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Mobile drawer — slides in from right */}
+      {/* Mobile drawer */}
       <div className={cn(
         'fixed inset-0 z-50 md:hidden transition-all duration-300',
         menuOpen ? 'pointer-events-auto' : 'pointer-events-none'
@@ -141,6 +172,14 @@ export function Navbar() {
                 <LogOut className="w-4 h-4" /> Sign Out
               </button>
             )}
+            {/* Theme toggle in mobile menu */}
+            <button
+              onClick={toggle}
+              className="font-mono text-sm tracking-widest uppercase text-white/40 hover:text-white py-4 border-b border-white/8 transition-colors text-left flex items-center gap-3"
+            >
+              {light ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              {light ? 'Dark Mode' : 'Light Mode'}
+            </button>
           </div>
         </div>
       </div>

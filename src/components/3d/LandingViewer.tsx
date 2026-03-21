@@ -214,9 +214,24 @@ function ResponsiveCamera({ baseFov }: { baseFov: number }) {
 }
 
 
+function useCanvasBg() {
+  const [bg, setBg] = useState(() =>
+    localStorage.getItem('theme') !== 'dark' ? '#f5f2ee' : '#060606'
+  )
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setBg(localStorage.getItem('theme') !== 'dark' ? '#f5f2ee' : '#060606')
+    })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
+  return bg
+}
+
 export function LandingViewer({ modelPath }: LandingViewerProps) {
   const { colors, active, jumpTo, setPause } = useAutoLerp()
   const cfg = useModelConfigStore(s => s.getConfig(modelKey(modelPath)))
+  const canvasBg = useCanvasBg()
 
   return (
     <div
@@ -232,9 +247,9 @@ export function LandingViewer({ modelPath }: LandingViewerProps) {
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.4,
         }}
-        style={{ background: '#060606' }}
+        style={{ background: canvasBg }}
       >
-        <color attach="background" args={['#060606']} />
+        <color attach="background" args={[canvasBg]} />
         <ResponsiveCamera baseFov={cfg.cameraFov ?? 40} />
         <Suspense fallback={null}>
           {/* Metallic lighting rig */}
