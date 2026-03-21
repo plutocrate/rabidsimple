@@ -119,11 +119,11 @@ export function MailingListPopup() {
           />
 
           {/* Card */}
-          <div className="fixed inset-0 z-[61] flex items-center justify-center p-4 pointer-events-none">
+          <div className="fixed z-[61] pointer-events-none" style={{ top: '20px', left: '20px', right: '20px', bottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <motion.div
               ref={cardRef}
-              className="pointer-events-auto"
-              style={{ rotateX, rotateY, transformPerspective: 1200 }}
+              className="pointer-events-auto w-full"
+              style={{ rotateX, rotateY, transformPerspective: 1200, maxWidth: '480px' }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               initial={{ opacity: 0, scale: 0.88, y: 24 }}
@@ -132,7 +132,7 @@ export function MailingListPopup() {
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             >
               <div
-                className="relative w-[400px] sm:w-[560px] overflow-hidden"
+                className="relative w-full overflow-hidden"
                 style={{ background: cardBg, border: `1px solid ${fg10}`, boxShadow: cardShadow }}
               >
                 {/* Corner marks */}
@@ -177,7 +177,7 @@ export function MailingListPopup() {
                 </div>
 
                 {/* Body */}
-                <div className="px-10 pt-11 pb-9">
+                <div className="px-5 sm:px-10 pt-6 sm:pt-10 pb-5 sm:pb-8">
                   <AnimatePresence mode="wait">
                     {status === 'success' ? (
                       <motion.div
@@ -211,13 +211,13 @@ export function MailingListPopup() {
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.15, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                         >
-                          <p className="font-mono text-[11px] tracking-[0.25em] uppercase mb-4" style={{ color: fg50 }}>
+                          <p className="font-mono text-[10px] sm:text-[11px] tracking-[0.25em] uppercase mb-3 sm:mb-4" style={{ color: fg50 }}>
                             First access
                           </p>
-                          <h2 className="font-heading leading-none tracking-wider mb-3" style={{ color: fg, fontSize: 'clamp(3.2rem,10vw,4.8rem)' }}>
+                          <h2 className="font-heading leading-none tracking-wider mb-3 text-4xl sm:text-6xl" style={{ color: fg }}>
                             GET EARLY<br />ACCESS
                           </h2>
-                          <p className="font-display text-base italic leading-relaxed mb-8" style={{ color: fg60 }}>
+                          <p className="font-display text-sm sm:text-base italic leading-relaxed mb-5 sm:mb-8" style={{ color: fg60 }}>
                             Join the waitlist. Be first when RABID ships.
                           </p>
                         </motion.div>
@@ -242,7 +242,7 @@ export function MailingListPopup() {
                                 onBlur={() => setFocused(false)}
                                 placeholder="your@email.com"
                                 required
-                                className="relative z-10 w-full bg-transparent px-5 py-4 font-mono text-sm focus:outline-none pr-12"
+                                className="relative z-10 w-full bg-transparent px-4 sm:px-5 py-3 sm:py-4 font-mono text-sm focus:outline-none pr-12"
                                 style={{ color: fg }}
                               />
                               <motion.button
@@ -291,7 +291,7 @@ export function MailingListPopup() {
 
                 {/* Bottom rule */}
                 <motion.div
-                  className="h-px mx-10 mb-7"
+                  className="h-px mx-5 sm:mx-10 mb-4 sm:mb-6"
                   style={{ background: `linear-gradient(to right, transparent, ${fg20}, transparent)` }}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
