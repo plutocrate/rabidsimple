@@ -51,47 +51,34 @@ export function MailingListPopup() {
 
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
-  const rotateX = useTransform(my, [-0.5, 0.5], [3, -3])
-  const rotateY = useTransform(mx, [-0.5, 0.5], [-3, 3])
+  const rotateX = useTransform(my, [-1, 1], [8, -8])
+  const rotateY = useTransform(mx, [-1, 1], [-8, 8])
 
-  // Gyroscope tilt for mobile — fully guarded, never crashes
+  // Gyroscope tilt for mobile
   useEffect(() => {
     try {
-      const isMobile = window.matchMedia('(pointer: coarse)').matches
-      if (!isMobile) return
-
+      if (!window.matchMedia('(pointer: coarse)').matches) return
       let baseGamma: number | null = null
-      let baseBeta: number | null = null
-
-      function handleOrientation(e: DeviceOrientationEvent) {
+      let baseBeta:  number | null = null
+      function onOrientation(e: DeviceOrientationEvent) {
         try {
-          if (e.gamma === null || e.beta === null) return
-          if (baseGamma === null) { baseGamma = e.gamma; baseBeta = e.beta; return }
-          const dGamma = Math.max(-25, Math.min(25, e.gamma - baseGamma!))
-          const dBeta  = Math.max(-25, Math.min(25, e.beta  - baseBeta!))
-          mx.set(dGamma / 25 * 0.5)
-          my.set(dBeta  / 25 * 0.5)
-        } catch { /* ignore */ }
+          if (e.gamma == null || e.beta == null) return
+          if (baseGamma == null) { baseGamma = e.gamma; baseBeta = e.beta; return }
+          mx.set(Math.max(-1, Math.min(1, (e.gamma - baseGamma) / 45)))
+          my.set(Math.max(-1, Math.min(1, (e.beta  - baseBeta!) / 45)))
+        } catch { /**/ }
       }
-
-      try {
-        const req = (DeviceOrientationEvent as any).requestPermission
-        if (typeof req === 'function') {
-          req().then((state: string) => {
-            if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation)
-          }).catch(() => {})
-        } else {
-          window.addEventListener('deviceorientation', handleOrientation)
-        }
-      } catch { /* ignore */ }
-
-      return () => {
-        try { window.removeEventListener('deviceorientation', handleOrientation) } catch { /* ignore */ }
+      const req = (DeviceOrientationEvent as any).requestPermission
+      if (typeof req === 'function') {
+        req().then((s: string) => { if (s === 'granted') window.addEventListener('deviceorientation', onOrientation, true) }).catch(() => {})
+      } else {
+        window.addEventListener('deviceorientation', onOrientation, true)
       }
-    } catch { /* ignore */ }
+      return () => { try { window.removeEventListener('deviceorientation', onOrientation, true) } catch { /**/ } }
+    } catch { /**/ }
   }, [])
 
-  // Colors derived from theme
+
   const fg      = isLight ? 'rgba(20,16,12,1)'    : 'rgba(255,255,255,1)'
   const fg60    = isLight ? 'rgba(20,16,12,0.60)' : 'rgba(255,255,255,0.60)'
   const fg50    = isLight ? 'rgba(20,16,12,0.50)' : 'rgba(255,255,255,0.50)'
