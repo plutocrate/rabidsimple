@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCartStore } from '@/store/useCartStore'
+import { useSiteSettings } from '@/store/useSiteSettings'
 
 import { LandingPage }           from '@/pages/LandingPage'
 import { ShopPage }              from '@/pages/shop/ShopPage'
@@ -31,7 +32,16 @@ function RequireAdmin({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-// Checkout requires a logged-in account (any role)
+// Blocks product pages when shop is closed — admins can still access
+function RequireShopOpen({ children }: { children: React.ReactNode }) {
+  const { isAdmin } = useAuthStore()
+  const { settings, loaded } = useSiteSettings()
+  if (!loaded) return null
+  if (settings.shopClosed && !isAdmin) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
   if (!isAuthenticated) return <Navigate to="/auth/login" replace />
@@ -48,7 +58,9 @@ function RedirectIfAuth({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { init } = useAuthStore()
   const { validateCart } = useCartStore()
+  const { fetch: fetchSettings } = useSiteSettings()
   useEffect(() => { const unsub = init(); return unsub }, [init])
+  useEffect(() => { fetchSettings() }, [])
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -56,7 +68,7 @@ export default function App() {
         {/* Public */}
         <Route path="/"              element={<LandingPage />} />
         <Route path="/shop"          element={<ShopPage />} />
-        <Route path="/product/:slug" element={<ProductPage />} />
+        <Route path="/product/:slug" element={<RequireShopOpen><ProductPage /></RequireShopOpen>} />
         <Route path="/services"      element={<ServicesPage />} />
         <Route path="/checkout"      element={<RequireAuth><CheckoutPage /></RequireAuth>} />
         <Route path="/privacy"       element={<PrivacyPage />} />
